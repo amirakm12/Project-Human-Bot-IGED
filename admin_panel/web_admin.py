@@ -9,6 +9,9 @@ import json
 from datetime import datetime
 import logging
 
+# Configure logger
+logger = logging.getLogger(__name__)
+
 # Try to import Flask dependencies
 try:
     from flask import Flask, render_template, request, jsonify, redirect, url_for

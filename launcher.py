@@ -20,10 +20,18 @@ from core.command_parser import CommandParser
 from core.memory_engine import MemoryEngine
 from core.encryption import EncryptionManager
 from agents.orchestrator import Orchestrator
-from ui.win_gui.main_window import IGEDGUI
 from admin_panel.web_admin import WebAdminPanel
 from watchdog import Watchdog
 import logging
+
+# Try to import GUI components (optional)
+try:
+    from ui.win_gui.main_window import IGEDGUI
+    GUI_AVAILABLE = True
+except ImportError as e:
+    GUI_AVAILABLE = False
+    print(f"⚠️ GUI not available: {e}")
+    print("🌐 Web interface will be available at http://localhost:8080")
 
 # Configure logging
 try:
@@ -109,12 +117,18 @@ class IGEDLauncher:
     
     def start_gui(self):
         """Start the GUI interface"""
+        if not GUI_AVAILABLE:
+            logger.info("🖥️ GUI not available, skipping...")
+            return False
+            
         try:
             logger.info("🖥️ Starting GUI interface...")
             self.components['gui'] = IGEDGUI(self.components)
             self.components['gui'].run()
+            return True
         except Exception as e:
             logger.error(f"❌ Failed to start GUI: {e}")
+            return False
     
     def start_web_admin(self):
         """Start the web admin panel"""
@@ -157,8 +171,31 @@ class IGEDLauncher:
             watchdog_thread.start()
             threads.append(watchdog_thread)
             
-            # Start GUI (main thread)
-            self.start_gui()
+            # Start GUI (main thread) or run in headless mode
+            if not self.start_gui():
+                logger.info("🌐 Running in headless mode - Web interface available at http://localhost:8080")
+                logger.info("🎤 Voice commands available")
+                logger.info("📱 Android client can connect on port 9090")
+                logger.info("⌨️ Type 'quit' to exit")
+                
+                # Simple command loop for headless mode
+                try:
+                    while self.running:
+                        try:
+                            user_input = input("IGED> ").strip()
+                            if user_input.lower() in ['quit', 'exit', 'q']:
+                                break
+                            elif user_input:
+                                # Process command through parser
+                                result = self.components['parser'].parse_command(user_input)
+                                if result:
+                                    self.components['orchestrator'].execute_task(result)
+                        except EOFError:
+                            break
+                        except KeyboardInterrupt:
+                            break
+                except Exception as e:
+                    logger.error(f"❌ Command loop error: {e}")
             
         except KeyboardInterrupt:
             logger.info("🛑 Shutdown requested...")
