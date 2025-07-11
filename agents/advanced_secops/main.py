@@ -5,12 +5,8 @@ Advanced penetration testing, exploit development, and security operations
 """
 
 import json
-import os
-import subprocess
 import sys
-import threading
 import time
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 # Add project root to path
@@ -18,21 +14,18 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 try:
-    import requests
 
     REQUESTS_AVAILABLE = True
 except ImportError:
     REQUESTS_AVAILABLE = False
 
 try:
-    import psutil
 
     PSUTIL_AVAILABLE = True
 except ImportError:
     PSUTIL_AVAILABLE = False
 
 try:
-    import nmap
 
     NMAP_AVAILABLE = True
 except ImportError:
@@ -42,7 +35,8 @@ except ImportError:
 class AdvancedSecOpsAgent:
     """Advanced Security Operations Agent for penetration testing and exploit development"""
 
-    def __init__(self, memory_engine=None):
+    def __init__(self, memory_engine=None) -> None:
+        """  Init   function."""
         self.memory_engine = memory_engine
         self.output_dir = Path("output/security/advanced")
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -70,6 +64,7 @@ class AdvancedSecOpsAgent:
     def run(
         self, command: str, context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
+        """Run function."""
         """Execute advanced security operations commands"""
         try:
             if not REQUESTS_AVAILABLE:
@@ -112,6 +107,7 @@ class AdvancedSecOpsAgent:
     def develop_exploit(
         self, command: str, context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
+        """Develop Exploit function."""
         """Develop custom exploits for identified vulnerabilities"""
         try:
             # Extract target information from command
@@ -140,6 +136,7 @@ class AdvancedSecOpsAgent:
             }
 
     def generate_payload(
+        """Generate Payload function."""
         self, command: str, context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Generate custom payloads for various attack scenarios"""
@@ -170,6 +167,7 @@ class AdvancedSecOpsAgent:
             }
 
     def advanced_vulnerability_scan(
+        """Advanced Vulnerability Scan function."""
         self, command: str, context: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Perform advanced vulnerability scanning with exploit suggestions"""
@@ -220,6 +218,7 @@ class AdvancedSecOpsAgent:
             }
 
     def advanced_reconnaissance(
+        """Advanced Reconnaissance function."""
         self, command: str, context: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Perform advanced reconnaissance and intelligence gathering"""
@@ -262,6 +261,7 @@ class AdvancedSecOpsAgent:
             }
 
     def privilege_escalation(
+        """Privilege Escalation function."""
         self, command: str, context: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Generate privilege escalation techniques and exploits"""
@@ -298,6 +298,7 @@ class AdvancedSecOpsAgent:
             }
 
     def lateral_movement(
+        """Lateral Movement function."""
         self, command: str, context: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Generate lateral movement techniques and tools"""
@@ -329,6 +330,7 @@ class AdvancedSecOpsAgent:
             }
 
     def establish_persistence(
+        """Establish Persistence function."""
         self, command: str, context: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Generate persistence mechanisms for various systems"""
@@ -364,6 +366,7 @@ class AdvancedSecOpsAgent:
             }
 
     def anti_forensics(
+        """Anti Forensics function."""
         self, command: str, context: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Generate anti-forensics and evasion techniques"""
@@ -397,6 +400,7 @@ class AdvancedSecOpsAgent:
             }
 
     def develop_custom_tool(
+        """Develop Custom Tool function."""
         self, command: str, context: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Develop custom security tools based on requirements"""
@@ -425,6 +429,7 @@ class AdvancedSecOpsAgent:
             }
 
     def general_security_operation(
+        """General Security Operation function."""
         self, command: str, context: Dict[str, Any] = None
     ) -> Dict[str, Any]:
         """Handle general security operations"""
@@ -483,16 +488,19 @@ import struct
 import sys
 
 class Exploit:
-    def __init__(self, target, port):
+    """Exploit implementation."""
+    def __init__(self, target, port) -> None:
+        """  Init   function."""
         self.target = target
         self.port = port
     
-    def generate_payload(self):
+    def generate_payload(self) -> None:
         # Payload generation logic here
         payload = b"A" * 100  # Example buffer overflow
         return payload
     
-    def execute(self):
+    def execute(self) -> None:
+        """Execute function."""
         try:
             print(f"[*] Connecting to {{self.target}}:{{self.port}}")
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -549,10 +557,9 @@ Generated by IGED Advanced SecOps Agent
 """
 
 import socket
-import subprocess
-import os
 
-def reverse_shell(host, port):
+def reverse_shell(host, port) -> None:
+    """Reverse Shell function."""
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((host, port))
@@ -584,9 +591,9 @@ Generated by IGED Advanced SecOps Agent
 """
 
 import socket
-import subprocess
 
-def bind_shell(port):
+def bind_shell(port) -> None:
+    """Bind Shell function."""
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind(("0.0.0.0", port))
@@ -623,14 +630,15 @@ Generated by IGED Advanced SecOps Agent
 """
 
 import socket
-import subprocess
 import sys
 
 class GenericPayload:
-    def __init__(self):
+    """GenericPayload implementation."""
+    def __init__(self) -> None:
+        """  Init   function."""
         self.name = "Generic Payload"
     
-    def execute(self):
+    def execute(self) -> None:
         # Payload execution logic here
         print("[*] Payload executing...")
         # Add your custom payload code here
@@ -660,6 +668,7 @@ if __name__ == "__main__":
         }
 
     def _analyze_vulnerabilities(
+        """ Analyze Vulnerabilities function."""
         self, scan_results: Dict[str, Any]
     ) -> List[Dict[str, Any]]:
         """Analyze vulnerabilities and suggest exploits"""
@@ -740,20 +749,21 @@ Techniques: {", ".join(techniques)}
 Generated by IGED Advanced SecOps Agent
 """
 
-import os
-import subprocess
 import sys
 
 class PrivilegeEscalation:
-    def __init__(self):
+    """PrivilegeEscalation implementation."""
+    def __init__(self) -> None:
+        """  Init   function."""
         self.system_type = "{system_type}"
         self.techniques = {techniques}
     
-    def check_permissions(self):
+    def check_permissions(self) -> None:
         # Check current permissions
         pass
     
-    def escalate(self):
+    def escalate(self) -> None:
+        """Escalate function."""
         print("[*] Attempting privilege escalation...")
         for technique in self.techniques:
             print(f"[*] Trying: {{technique}}")
@@ -782,14 +792,17 @@ Generated by IGED Advanced SecOps Agent
 """
 
 class LateralMovement:
-    def __init__(self):
+    """LateralMovement implementation."""
+    def __init__(self) -> None:
+        """  Init   function."""
         self.techniques = {techniques}
     
-    def enumerate_targets(self):
+    def enumerate_targets(self) -> None:
         # Target enumeration logic
         pass
     
-    def move_laterally(self):
+    def move_laterally(self) -> None:
+        """Move Laterally function."""
         print("[*] Initiating lateral movement...")
         for technique in self.techniques:
             print(f"[*] Using: {{technique}}")
@@ -819,11 +832,14 @@ Generated by IGED Advanced SecOps Agent
 """
 
 class Persistence:
-    def __init__(self):
+    """Persistence implementation."""
+    def __init__(self) -> None:
+        """  Init   function."""
         self.system_type = "{system_type}"
         self.methods = {methods}
     
-    def establish_persistence(self):
+    def establish_persistence(self) -> None:
+        """Establish Persistence function."""
         print("[*] Establishing persistence...")
         for method in self.methods:
             print(f"[*] Using: {{method}}")
@@ -856,10 +872,13 @@ Generated by IGED Advanced SecOps Agent
 """
 
 class AntiForensics:
-    def __init__(self):
+    """AntiForensics implementation."""
+    def __init__(self) -> None:
+        """  Init   function."""
         self.techniques = {techniques}
     
-    def clear_tracks(self):
+    def clear_tracks(self) -> None:
+        """Clear Tracks function."""
         print("[*] Clearing forensic evidence...")
         for technique in self.techniques:
             print(f"[*] Applying: {{technique}}")
@@ -891,15 +910,17 @@ Generated by IGED Advanced SecOps Agent
 """
 
 import socket
-import threading
 import sys
 
 class CustomSecurityTool:
-    def __init__(self):
+    """CustomSecurityTool implementation."""
+    def __init__(self) -> None:
+        """  Init   function."""
         self.name = "{tool_type}"
         self.features = {features}
     
-    def run(self):
+    def run(self) -> None:
+        """Run function."""
         print(f"[*] Starting {{self.name}}")
         for feature in self.features:
             print(f"[*] Feature available: {{feature}}")
@@ -907,7 +928,7 @@ class CustomSecurityTool:
         # Implement custom tool logic here
         self.main_function()
     
-    def main_function(self):
+    def main_function(self) -> None:
         # Main tool functionality
         print("[*] Tool execution completed")
 
@@ -932,6 +953,7 @@ if __name__ == "__main__":
             return "unknown"
 
     def _execute_general_operation(
+        """ Execute General Operation function."""
         self, operation_type: str, command: str
     ) -> Dict[str, Any]:
         """Execute general security operation"""

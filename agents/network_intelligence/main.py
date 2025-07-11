@@ -4,18 +4,10 @@ Advanced network monitoring, intelligence gathering, and real/simulated network 
 Enhanced with maximum capabilities for comprehensive network intelligence
 """
 
-import base64
-import binascii
-import hashlib
 import json
 import logging
 import socket
-import struct
-import subprocess
-import threading
-import time
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 # Try to import advanced network libraries
@@ -42,7 +34,6 @@ except ImportError:
     PSUTIL_AVAILABLE = False
 
 try:
-    import requests
 
     REQUESTS_AVAILABLE = True
 except ImportError:
@@ -62,11 +53,13 @@ if not PSUTIL_AVAILABLE:
 
 class NetworkIntelligenceAgent:
     """
-    IGED Network Intelligence Agent: Maximum capability network intelligence, monitoring, and reporting.
-    Combines real and simulated network intelligence with advanced threat detection and behavioral analysis.
-    """
+    IGED Network Intelligence Agent: Maximum capability network intelligence, monitoring, and \
+        reporting.    Combines real and \
+        simulated network intelligence with advanced threat detection and \
+        behavioral analysis.    """
 
-    def __init__(self, memory_engine):
+    def __init__(self, memory_engine) -> None:
+        """Init   function."""
         self.memory = memory_engine
         self.output_dir = Path("output/network_intelligence")
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -423,7 +416,7 @@ class NetworkIntelligenceAgent:
                             try:
                                 hostname = socket.gethostbyaddr(host)[0]
                                 results.append(f"    Hostname: {hostname}")
-                            except:
+                            except Exception:
                                 pass
                 except Exception as e:
                     results.append(f"  Nmap scan error: {e}")
@@ -913,11 +906,12 @@ class NetworkIntelligenceAgent:
 class PacketAnalyzer:
     """Advanced packet analysis capabilities"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Init   function."""
         self.analysis_rules = {}
         self.signature_database = {}
 
-    def analyze_packet(self, packet):
+    def analyze_packet(self, packet) -> None:
         """Analyze individual packet"""
         pass
 
@@ -925,28 +919,29 @@ class PacketAnalyzer:
 class ThreatDetector:
     """Advanced threat detection system"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Init   function."""
         self.detected_threats = []
         self.threat_signatures = {}
         self.vulnerability_database = {}
 
-    def analyze_network(self, network):
+    def analyze_network(self, network) -> None:
         """Analyze network for threats"""
         return ["Advanced threat analysis completed"]
 
-    def comprehensive_threat_analysis(self, network):
+    def comprehensive_threat_analysis(self, network) -> None:
         """Comprehensive threat analysis"""
         return ["Comprehensive threat analysis completed"]
 
-    def vulnerability_assessment(self, network):
+    def vulnerability_assessment(self, network) -> None:
         """Vulnerability assessment"""
         return ["Vulnerability assessment completed"]
 
-    def malware_detection(self, network):
+    def malware_detection(self, network) -> None:
         """Malware detection"""
         return ["Malware detection completed"]
 
-    def risk_assessment(self, network):
+    def risk_assessment(self, network) -> None:
         """Risk assessment"""
         return ["Risk assessment completed"]
 
@@ -954,28 +949,29 @@ class ThreatDetector:
 class BehaviorAnalyzer:
     """Advanced behavioral analysis system"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Init   function."""
         self.anomalies = []
         self.behavioral_patterns = {}
         self.user_profiles = {}
 
-    def analyze_network_behavior(self, network):
+    def analyze_network_behavior(self, network) -> None:
         """Analyze network behavior"""
         return ["Network behavior analysis completed"]
 
-    def analyze_network_patterns(self, network):
+    def analyze_network_patterns(self, network) -> None:
         """Analyze network patterns"""
         return ["Network pattern analysis completed"]
 
-    def detect_anomalies(self, network):
+    def detect_anomalies(self, network) -> None:
         """Detect anomalies"""
         return ["Anomaly detection completed"]
 
-    def user_profiling(self, network):
+    def user_profiling(self, network) -> None:
         """User profiling"""
         return ["User profiling completed"]
 
-    def predictive_analysis(self, network):
+    def predictive_analysis(self, network) -> None:
         """Predictive analysis"""
         return ["Predictive analysis completed"]
 
@@ -983,10 +979,11 @@ class BehaviorAnalyzer:
 class ProtocolDecoder:
     """Advanced protocol decoding capabilities"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Init   function."""
         self.protocol_handlers = {}
         self.decoding_rules = {}
 
-    def decode_protocol(self, data, protocol):
+    def decode_protocol(self, data, protocol) -> None:
         """Decode protocol data"""
         pass

@@ -6,26 +6,22 @@ Handles AES-256 encryption for sensitive data
 import base64
 import logging
 import os
-from pathlib import Path
 from typing import Optional, Union
 
-from cryptography.fernet import Fernet
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 logger = logging.getLogger(__name__)
 
 
 class EncryptionManager:
-    def __init__(self, key_path: str = "config/secret.key"):
+    """EncryptionManager implementation."""
+    def __init__(self, key_path: str = "config/secret.key") -> None:
+        """  Init   function."""
         self.key_path = Path(key_path)
         self.key = None
         self.cipher = None
         self.initialize_encryption()
 
-    def initialize_encryption(self):
+    def initialize_encryption(self) -> None:
         """Initialize encryption with key generation or loading"""
         try:
             # Create config directory if it doesn't exist
@@ -45,7 +41,7 @@ class EncryptionManager:
             logger.error(f"❌ Failed to initialize encryption: {e}")
             raise
 
-    def generate_key(self):
+    def generate_key(self) -> None:
         """Generate a new encryption key"""
         try:
             # Generate a new Fernet key
@@ -61,7 +57,7 @@ class EncryptionManager:
             logger.error(f"❌ Failed to generate encryption key: {e}")
             raise
 
-    def load_key(self):
+    def load_key(self) -> None:
         """Load encryption key from file"""
         try:
             with open(self.key_path, "rb") as f:
@@ -204,6 +200,7 @@ class EncryptionManager:
             raise
 
     def generate_password_hash(
+        """Generate Password Hash function."""
         self, password: str, salt: Optional[bytes] = None
     ) -> tuple:
         """Generate password hash using PBKDF2"""
@@ -248,7 +245,7 @@ class EncryptionManager:
             logger.error(f"❌ Password verification failed: {e}")
             return False
 
-    def secure_delete(self, file_path: str, passes: int = 3):
+    def secure_delete(self, file_path: str, passes: int = 3) -> None:
         """Securely delete a file by overwriting with random data"""
         try:
             path_obj = Path(file_path)
@@ -289,7 +286,7 @@ class EncryptionManager:
             logger.error(f"❌ Failed to get key info: {e}")
             return {}
 
-    def rotate_key(self, new_key_path: Optional[str] = None):
+    def rotate_key(self, new_key_path: Optional[str] = None) -> None:
         """Rotate encryption key"""
         try:
             # Generate new key

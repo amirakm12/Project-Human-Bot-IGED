@@ -6,23 +6,23 @@ Manages and delegates tasks to different agents
 import importlib
 import importlib.util
 import logging
-import os
-import sys
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
 
 class Orchestrator:
-    def __init__(self, memory_engine):
+    """Orchestrator implementation."""
+
+    def __init__(self, memory_engine) -> None:
+        """Init   function."""
         self.memory = memory_engine
         self.agents = {}
         self.plugins = {}
         self.load_agents()
         self.load_plugins()
 
-    def load_agents(self):
+    def load_agents(self) -> None:
         """Load all available agents"""
         try:
             agents_dir = Path("agents")
@@ -44,7 +44,7 @@ class Orchestrator:
         except Exception as e:
             logger.error(f"❌ Failed to load agents: {e}")
 
-    def _load_agent(self, agent_name: str, class_name: str):
+    def _load_agent(self, agent_name: str, class_name: str) -> None:
         """Load a specific agent"""
         try:
             # Try to import agent module
@@ -63,7 +63,7 @@ class Orchestrator:
         except Exception as e:
             logger.error(f"❌ Failed to load agent {agent_name}: {e}")
 
-    def load_plugins(self):
+    def load_plugins(self) -> None:
         """Load all available plugins"""
         try:
             plugins_dir = Path("plugins")
@@ -80,7 +80,7 @@ class Orchestrator:
         except Exception as e:
             logger.error(f"❌ Failed to load plugins: {e}")
 
-    def _load_plugin(self, plugin_file: Path):
+    def _load_plugin(self, plugin_file: Path) -> None:
         """Load a specific plugin"""
         try:
             plugin_name = plugin_file.stem

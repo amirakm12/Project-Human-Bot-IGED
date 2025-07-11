@@ -4,13 +4,11 @@ IGED Dependency Installer
 Installs all required dependencies for IGED
 """
 
-import os
 import subprocess
 import sys
-from pathlib import Path
 
 
-def run_command(command, description):
+def run_command(command, description) -> None:
     """Run a command and handle errors"""
     print(f"📦 {description}...")
     try:
@@ -26,7 +24,7 @@ def run_command(command, description):
         return False
 
 
-def check_python_version():
+def check_python_version() -> None:
     """Check if Python version is compatible"""
     version = sys.version_info
     if version.major < 3 or (version.major == 3 and version.minor < 8):
@@ -36,14 +34,14 @@ def check_python_version():
     return True
 
 
-def upgrade_pip():
+def upgrade_pip() -> None:
     """Upgrade pip to latest version"""
     return run_command(
         f"{sys.executable} -m pip install --upgrade pip", "Upgrading pip"
     )
 
 
-def install_core_dependencies():
+def install_core_dependencies() -> None:
     """Install core dependencies"""
     core_deps = [
         "cryptography>=3.4.8",
@@ -60,7 +58,7 @@ def install_core_dependencies():
     return True
 
 
-def install_voice_dependencies():
+def install_voice_dependencies() -> None:
     """Install voice recognition dependencies"""
     voice_deps = [
         "SpeechRecognition>=3.10.0",
@@ -76,7 +74,7 @@ def install_voice_dependencies():
     return True
 
 
-def install_data_analysis_dependencies():
+def install_data_analysis_dependencies() -> None:
     """Install data analysis dependencies"""
     data_deps = [
         "pandas>=2.0.0",
@@ -95,7 +93,7 @@ def install_data_analysis_dependencies():
     return True
 
 
-def install_security_dependencies():
+def install_security_dependencies() -> None:
     """Install security and network dependencies"""
     security_deps = ["python-nmap>=0.7.1", "psutil>=5.9.0"]
 
@@ -109,7 +107,7 @@ def install_security_dependencies():
     return True
 
 
-def install_build_dependencies():
+def install_build_dependencies() -> None:
     """Install build and development dependencies"""
     build_deps = ["pyinstaller>=5.13.0", "setuptools>=68.0.0", "wheel>=0.41.0"]
 
@@ -121,7 +119,7 @@ def install_build_dependencies():
     return True
 
 
-def create_directories():
+def create_directories() -> None:
     """Create necessary directories"""
     directories = [
         "config",
@@ -141,13 +139,12 @@ def create_directories():
     return True
 
 
-def generate_encryption_key():
+def generate_encryption_key() -> None:
     """Generate encryption key if it doesn't exist"""
     key_path = Path("config/secret.key")
     if not key_path.exists():
         print("🔐 Generating encryption key...")
         try:
-            from cryptography.fernet import Fernet
 
             key = Fernet.generate_key()
             key_path.parent.mkdir(parents=True, exist_ok=True)
@@ -163,7 +160,7 @@ def generate_encryption_key():
         return True
 
 
-def main():
+def main() -> None:
     """Main installation function"""
     print("🚀 IGED Dependency Installer")
     print("=" * 40)

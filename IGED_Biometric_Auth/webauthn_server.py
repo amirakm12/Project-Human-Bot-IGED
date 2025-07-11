@@ -4,29 +4,17 @@ IGED - WebAuthn Server
 Flask-based WebAuthn server for multi-device credential synchronization
 """
 
-import base64
-import hashlib
 import json
-import os
 import secrets
 from datetime import datetime, timedelta
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 try:
-    from fido2.cose import CoseKey
-    from fido2.server import Fido2Server
-    from fido2.utils import websafe_decode, websafe_encode
-    from fido2.webauthn import (
-        AuthenticatorSelectionCriteria,
-        PublicKeyCredentialCreationOptions,
-        PublicKeyCredentialRequestOptions,
-        PublicKeyCredentialRpEntity,
-        PublicKeyCredentialUserEntity,
-        UserVerificationRequirement,
-    )
-    from flask import Flask, jsonify, make_response, request, session
-    from flask_cors import CORS
+                                PublicKeyCredentialCreationOptions,
+                                PublicKeyCredentialRequestOptions,
+                                PublicKeyCredentialRpEntity,
+                                PublicKeyCredentialUserEntity,
+                                UserVerificationRequirement)
 
     FLASK_AVAILABLE = True
 except ImportError as e:
@@ -45,6 +33,7 @@ class WebAuthnServer:
     """WebAuthn server for IGED credential management"""
 
     def __init__(
+        """  Init   function."""
         self, rp_id: str = "iged.example.com", rp_name: str = "IGED Biometric Auth"
     ):
         self.rp_id = rp_id
@@ -60,7 +49,7 @@ class WebAuthnServer:
         # Load existing credentials
         self.load_credentials()
 
-    def load_credentials(self):
+    def load_credentials(self) -> None:
         """Load credentials from storage"""
         try:
             creds_file = Path("config/webauthn_credentials.json")
@@ -71,7 +60,7 @@ class WebAuthnServer:
         except Exception as e:
             logger.error(f"Failed to load credentials: {e}")
 
-    def save_credentials(self):
+    def save_credentials(self) -> None:
         """Save credentials to storage"""
         try:
             creds_file = Path("config/webauthn_credentials.json")
@@ -154,6 +143,7 @@ class WebAuthnServer:
             return {"error": str(e)}
 
     def register_complete(
+        """Register Complete function."""
         self, session_id: str, response_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Complete WebAuthn registration"""
@@ -259,6 +249,7 @@ class WebAuthnServer:
             return {"error": str(e)}
 
     def authenticate_complete(
+        """Authenticate Complete function."""
         self, session_id: str, response_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Complete WebAuthn authentication"""
@@ -304,7 +295,7 @@ class WebAuthnServer:
             logger.error(f"Authentication complete failed: {e}")
             return {"error": str(e)}
 
-    def _cleanup_sessions(self, max_age_minutes: int = 10):
+    def _cleanup_sessions(self, max_age_minutes: int = 10) -> None:
         """Clean up expired sessions"""
         cutoff = datetime.now() - timedelta(minutes=max_age_minutes)
 
@@ -328,8 +319,8 @@ class WebAuthnServer:
 
         if expired_reg or expired_auth:
             logger.info(
-                f"Cleaned up {len(expired_reg)} registration and {len(expired_auth)} authentication sessions"
-            )
+                f"Cleaned up {len(expired_reg)} registration and \
+                    {len(expired_auth)} authentication sessions"            )
 
     def get_users(self) -> List[Dict[str, Any]]:
         """Get list of registered users"""
@@ -367,7 +358,7 @@ if FLASK_AVAILABLE:
     webauthn_server = WebAuthnServer()
 
     @app.route("/health", methods=["GET"])
-    def health_check():
+    def health_check() -> None:
         """Health check endpoint"""
         return jsonify(
             {
@@ -379,7 +370,7 @@ if FLASK_AVAILABLE:
         )
 
     @app.route("/register", methods=["POST"])
-    def register():
+    def register() -> None:
         """Begin WebAuthn registration"""
         try:
             data = request.get_json()
@@ -396,7 +387,7 @@ if FLASK_AVAILABLE:
             return jsonify({"error": "Internal server error"}), 500
 
     @app.route("/register/complete", methods=["POST"])
-    def register_complete():
+    def register_complete() -> None:
         """Complete WebAuthn registration"""
         try:
             data = request.get_json()
@@ -415,7 +406,7 @@ if FLASK_AVAILABLE:
             return jsonify({"error": "Internal server error"}), 500
 
     @app.route("/authenticate", methods=["POST"])
-    def authenticate():
+    def authenticate() -> None:
         """Begin WebAuthn authentication"""
         try:
             data = request.get_json()
@@ -432,7 +423,7 @@ if FLASK_AVAILABLE:
             return jsonify({"error": "Internal server error"}), 500
 
     @app.route("/authenticate/complete", methods=["POST"])
-    def authenticate_complete():
+    def authenticate_complete() -> None:
         """Complete WebAuthn authentication"""
         try:
             data = request.get_json()
@@ -451,7 +442,7 @@ if FLASK_AVAILABLE:
             return jsonify({"error": "Internal server error"}), 500
 
     @app.route("/users", methods=["GET"])
-    def get_users():
+    def get_users() -> None:
         """Get list of registered users"""
         try:
             users = webauthn_server.get_users()
@@ -461,7 +452,7 @@ if FLASK_AVAILABLE:
             return jsonify({"error": "Internal server error"}), 500
 
     @app.route("/users/<user_id>", methods=["DELETE"])
-    def delete_user(user_id):
+    def delete_user(user_id) -> None:
         """Delete a user"""
         try:
             result = webauthn_server.delete_user(user_id)
@@ -474,7 +465,7 @@ if FLASK_AVAILABLE:
             return jsonify({"error": "Internal server error"}), 500
 
     @app.route("/stats", methods=["GET"])
-    def get_stats():
+    def get_stats() -> None:
         """Get server statistics"""
         try:
             stats = {
@@ -497,7 +488,7 @@ if FLASK_AVAILABLE:
             return jsonify({"error": "Internal server error"}), 500
 
 
-def main():
+def main() -> None:
     """Main function to run the WebAuthn server"""
     if not FLASK_AVAILABLE:
         print("❌ Flask or FIDO2 not available")

@@ -6,7 +6,6 @@ Security operations and penetration testing
 import logging
 import socket
 import subprocess
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 # Try to import optional dependencies
@@ -35,7 +34,10 @@ logger = logging.getLogger(__name__)
 
 
 class SecOpsAgent:
-    def __init__(self, memory_engine):
+    """SecOpsAgent implementation."""
+
+    def __init__(self, memory_engine) -> None:
+        """Init   function."""
         self.memory = memory_engine
         self.output_dir = Path("output/security")
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -141,7 +143,7 @@ class SecOpsAgent:
                         try:
                             hostname = socket.gethostbyaddr(host)[0]
                             results.append(f"    Hostname: {hostname}")
-                        except:
+                        except Exception:
                             pass
 
             except Exception as e:
@@ -217,7 +219,7 @@ class SecOpsAgent:
                 try:
                     subprocess.run([tool, "--version"], capture_output=True, timeout=5)
                     available_tools.append(tool)
-                except:
+                except Exception:
                     pass
 
             results.append(f"  Available security tools: {available_tools}")
@@ -228,7 +230,7 @@ class SecOpsAgent:
 
                 interfaces = psutil.net_if_addrs()
                 results.append(f"  Network interfaces: {list(interfaces.keys())}")
-            except:
+            except Exception:
                 results.append("  Network interfaces: Unable to detect")
 
             return "\n".join(results)
@@ -265,7 +267,7 @@ class SecOpsAgent:
                 if result == 0:
                     open_ports.append(port)
                 sock.close()
-            except:
+            except Exception:
                 pass
 
         return open_ports
@@ -312,7 +314,7 @@ class SecOpsAgent:
             if result == 0:
                 vulnerabilities.append("Telnet service open (insecure)")
             sock.close()
-        except:
+        except Exception:
             pass
 
         # Check for HTTP instead of HTTPS
@@ -320,7 +322,7 @@ class SecOpsAgent:
             response = requests.get(f"http://{target}", timeout=5)
             if response.status_code == 200:
                 vulnerabilities.append("HTTP service accessible (consider HTTPS)")
-        except:
+        except Exception:
             pass
 
         return vulnerabilities

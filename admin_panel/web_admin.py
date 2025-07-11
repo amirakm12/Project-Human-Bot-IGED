@@ -3,10 +3,8 @@ Web Admin Panel for IGED
 Remote control and monitoring interface
 """
 
-import json
 import logging
 import threading
-import time
 from datetime import datetime
 
 # Configure logger
@@ -14,8 +12,7 @@ logger = logging.getLogger(__name__)
 
 # Try to import Flask dependencies
 try:
-    from flask import Flask, jsonify, redirect, render_template, request, url_for
-    from flask_cors import CORS
+                       url_for)
 
     FLASK_AVAILABLE = True
 except ImportError as e:
@@ -24,26 +21,35 @@ except ImportError as e:
 
     # Create dummy classes for type hints
     class Flask:
-        def __init__(self, *args, **kwargs):
+        """Flask implementation."""
+        def __init__(self, *args, **kwargs) -> None:
+            """  Init   function."""
             pass
 
-    def render_template(*args, **kwargs):
+    def render_template(*args, **kwargs) -> None:
+        """Render Template function."""
         return ""
 
-    def request():
+    def request() -> None:
+        """Request function."""
         pass
 
-    def jsonify(*args, **kwargs):
+    def jsonify(*args, **kwargs) -> None:
+        """Jsonify function."""
         return {}
 
-    def redirect(*args, **kwargs):
+    def redirect(*args, **kwargs) -> None:
+        """Redirect function."""
         return ""
 
-    def url_for(*args, **kwargs):
+    def url_for(*args, **kwargs) -> None:
+        """Url For function."""
         return ""
 
     class CORS:
-        def __init__(self, *args, **kwargs):
+        """CORS implementation."""
+        def __init__(self, *args, **kwargs) -> None:
+            """  Init   function."""
             pass
 
 
@@ -51,7 +57,9 @@ logger = logging.getLogger(__name__)
 
 
 class WebAdminPanel:
-    def __init__(self, components):
+    """WebAdminPanel implementation."""
+    def __init__(self, components) -> None:
+        """  Init   function."""
         self.components = components
 
         # Check if Flask is available
@@ -70,15 +78,16 @@ class WebAdminPanel:
         self.server_thread = None
         self.running = False
 
-    def setup_routes(self):
+    def setup_routes(self) -> None:
         """Setup Flask routes"""
 
         @self.app.route("/")
-        def index():
+        def index() -> None:
+            """Index function."""
             return render_template("index.html")
 
         @self.app.route("/api/status")
-        def get_status():
+        def get_status() -> None:
             """Get system status"""
             try:
                 status = {
@@ -107,7 +116,7 @@ class WebAdminPanel:
                 return jsonify({"error": str(e)}), 500
 
         @self.app.route("/api/execute", methods=["POST"])
-        def execute_command():
+        def execute_command() -> None:
             """Execute a command"""
             try:
                 data = request.get_json()
@@ -127,7 +136,7 @@ class WebAdminPanel:
                 return jsonify({"error": str(e)}), 500
 
         @self.app.route("/api/memory")
-        def get_memory():
+        def get_memory() -> None:
             """Get memory entries"""
             try:
                 limit = request.args.get("limit", 50, type=int)
@@ -142,7 +151,7 @@ class WebAdminPanel:
                 return jsonify({"error": str(e)}), 500
 
         @self.app.route("/api/memory/search")
-        def search_memory():
+        def search_memory() -> None:
             """Search memory entries"""
             try:
                 query = request.args.get("q", "").strip()
@@ -161,7 +170,7 @@ class WebAdminPanel:
                 return jsonify({"error": str(e)}), 500
 
         @self.app.route("/api/agents")
-        def get_agents():
+        def get_agents() -> None:
             """Get available agents"""
             try:
                 if "orchestrator" in self.components:
@@ -176,7 +185,7 @@ class WebAdminPanel:
                 return jsonify({"error": str(e)}), 500
 
         @self.app.route("/api/voice/toggle", methods=["POST"])
-        def toggle_voice():
+        def toggle_voice() -> None:
             """Toggle voice listening"""
             try:
                 if "voice" in self.components:
@@ -194,7 +203,7 @@ class WebAdminPanel:
                 return jsonify({"error": str(e)}), 500
 
         @self.app.route("/api/memory/clear", methods=["POST"])
-        def clear_memory():
+        def clear_memory() -> None:
             """Clear all memory"""
             try:
                 if "memory" in self.components:
@@ -207,7 +216,7 @@ class WebAdminPanel:
                 return jsonify({"error": str(e)}), 500
 
         @self.app.route("/api/memory/export", methods=["POST"])
-        def export_memory():
+        def export_memory() -> None:
             """Export memory"""
             try:
                 data = request.get_json()
@@ -230,7 +239,7 @@ class WebAdminPanel:
             except Exception as e:
                 return jsonify({"error": str(e)}), 500
 
-    def start(self):
+    def start(self) -> None:
         """Start the web admin server"""
         if self.running:
             logger.warning("Web admin already running")
@@ -241,12 +250,12 @@ class WebAdminPanel:
         self.server_thread.start()
         logger.info("🌐 Web admin panel started on http://localhost:8080")
 
-    def stop(self):
+    def stop(self) -> None:
         """Stop the web admin server"""
         self.running = False
         logger.info("🛑 Web admin panel stopped")
 
-    def _run_server(self):
+    def _run_server(self) -> None:
         """Run the Flask server"""
         try:
             self.app.run(host="0.0.0.0", port=8080, debug=False, use_reloader=False)

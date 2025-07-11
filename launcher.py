@@ -4,11 +4,9 @@ IGED - Project Human Bot Launcher
 Main entry point for the sovereign AI assistant
 """
 
-import os
 import signal
 import sys
 import threading
-import time
 from pathlib import Path
 
 # Add project root to path
@@ -17,18 +15,19 @@ sys.path.insert(0, str(project_root))
 
 import logging
 
-from admin_panel.web_admin import WebAdminPanel
-from agents.orchestrator import Orchestrator
-from core.command_parser import CommandParser
-from core.encryption import EncryptionManager
-from core.memory_engine import MemoryEngine
-from core.voice_pipeline import VoicePipeline
-from watchdog import Watchdog
 
 # Try to import GUI components (optional)
 try:
+    from pathlib import Path
     from ui.win_gui.main_window import IGEDGUI
-
+    from admin_panel.web_admin import WebAdminPanel
+    from core.encryption import EncryptionManager
+    from core.memory_engine import MemoryEngine
+    from core.command_parser import CommandParser
+    from core.voice_pipeline import VoicePipeline
+    from agents.orchestrator import Orchestrator
+    from build_release.watchdog import Watchdog
+    from cryptography.fernet import Fernet
     GUI_AVAILABLE = True
 except ImportError as e:
     GUI_AVAILABLE = False
@@ -56,13 +55,35 @@ logger = logging.getLogger(__name__)
 
 
 class IGEDLauncher:
-    def __init__(self):
+    """Main launcher class for IGED system.
+
+    Manages initialization and orchestration of all IGED components including
+    voice pipeline, memory engine, agents, web admin, and GUI interfaces.
+    """
+
+    def __init__(self) -> None:
+        """Initialize the IGED launcher.
+
+        Sets up the component dictionary and initializes all system components.
+        """
         self.running = False
         self.components = {}
         self.initialize_system()
 
-    def initialize_system(self):
-        """Initialize all IGED components"""
+    def initialize_system(self) -> None:
+        """Initialize all IGED components.
+
+        Creates necessary directories and initializes:
+        - Encryption manager for secure data storage
+        - Memory engine for command/result persistence
+        - Command parser for natural language processing
+        - Orchestrator for agent management
+        - Voice pipeline for speech recognition
+        - Watchdog for system monitoring
+
+        Raises:
+            Exception: If any critical component fails to initialize
+        """
         try:
             logger.info("🚀 Initializing IGED System...")
 
@@ -97,8 +118,19 @@ class IGEDLauncher:
             logger.error(f"❌ Failed to initialize system: {e}")
             raise
 
-    def create_directories(self):
-        """Create necessary project directories"""
+    def create_directories(self) -> None:
+        """Create necessary project directories.
+
+        Creates the following directory structure:
+        - config/ - Configuration files and encryption keys
+        - memory/ - Persistent memory storage
+        - plugins/ - Plugin modules
+        - agents/ - AI agent modules
+        - ui/win_gui/ - GUI interface components
+        - admin_panel/ - Web administration interface
+        - android-client/ - Android integration
+        - logs/ - System log files
+        """
         directories = [
             "config",
             "memory",
@@ -113,7 +145,7 @@ class IGEDLauncher:
         for directory in directories:
             Path(directory).mkdir(parents=True, exist_ok=True)
 
-    def start_gui(self):
+    def start_gui(self) -> None:
         """Start the GUI interface"""
         if not GUI_AVAILABLE:
             logger.info("🖥️ GUI not available, skipping...")
@@ -128,7 +160,7 @@ class IGEDLauncher:
             logger.error(f"❌ Failed to start GUI: {e}")
             return False
 
-    def start_web_admin(self):
+    def start_web_admin(self) -> None:
         """Start the web admin panel"""
         try:
             logger.info("🌐 Starting web admin panel...")
@@ -137,7 +169,7 @@ class IGEDLauncher:
         except Exception as e:
             logger.error(f"❌ Failed to start web admin: {e}")
 
-    def start_voice_listening(self):
+    def start_voice_listening(self) -> None:
         """Start voice listening in background"""
         try:
             logger.info("🎤 Starting voice listening...")
@@ -145,8 +177,19 @@ class IGEDLauncher:
         except Exception as e:
             logger.error(f"❌ Failed to start voice listening: {e}")
 
-    def run(self):
-        """Main run loop"""
+    def run(self) -> None:
+        """Main run loop for IGED system.
+
+        Starts all system components in separate threads:
+        - Voice listening thread for speech recognition
+        - Web admin thread for remote management
+        - Watchdog thread for system monitoring
+
+        Attempts to start GUI interface, falls back to headless mode
+        with interactive command prompt if GUI is unavailable.
+
+        Handles graceful shutdown on KeyboardInterrupt and other exceptions.
+        """
         try:
             self.running = True
             logger.info("🎯 IGED is now running!")
@@ -210,7 +253,7 @@ class IGEDLauncher:
         finally:
             self.shutdown()
 
-    def shutdown(self):
+    def shutdown(self) -> None:
         """Clean shutdown of all components"""
         logger.info("🔄 Shutting down IGED...")
         self.running = False
@@ -230,14 +273,35 @@ class IGEDLauncher:
         logger.info("✅ IGED shutdown complete")
 
 
-def signal_handler(signum, frame):
-    """Handle shutdown signals"""
+def signal_handler(signum, frame) -> None:
+    """Handle shutdown signals gracefully.
+
+    Args:
+        signum: Signal number received (SIGINT, SIGTERM, etc.)
+        frame: Current stack frame (unused)
+    """
     logger.info(f"📡 Received signal {signum}, shutting down...")
     sys.exit(0)
 
 
-def main():
-    """Main entry point"""
+def main() -> None:
+    """Main entry point for IGED application.
+
+    Performs system initialization:
+    1. Registers signal handlers for graceful shutdown
+    2. Validates Python version compatibility (3.8+ required)
+    3. Checks for required dependencies
+    4. Generates encryption key if missing
+    5. Launches IGED system
+
+    Dependencies checked:
+    - cryptography: Required for encryption
+    - pandas: Optional for data analysis
+    - numpy: Optional for numerical computing
+    - matplotlib: Optional for data visualization
+
+    Exits with code 1 if critical requirements are not met.
+    """
     # Register signal handlers
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
@@ -282,7 +346,6 @@ def main():
         print("🔑 Generating encryption key...")
         try:
             from cryptography.fernet import Fernet
-
             key = Fernet.generate_key()
             Path("config").mkdir(exist_ok=True)
             with open("config/secret.key", "wb") as f:

@@ -3,20 +3,22 @@ Discord Notification Plugin for IGED
 Sends notifications to Discord webhook
 """
 
-import json
 from datetime import datetime
 
 import requests
 
 
 class Plugin:
-    def __init__(self):
+    """Plugin implementation."""
+
+    def __init__(self) -> None:
+        """Init   function."""
         self.name = "Discord Notifier"
         self.version = "1.0.0"
         self.description = "Sends notifications to Discord webhook"
         self.webhook_url = None
 
-    def run(self, input_text):
+    def run(self, input_text) -> None:
         """Run the plugin with input text"""
         try:
             # Check if webhook URL is configured
@@ -50,12 +52,12 @@ class Plugin:
         except Exception as e:
             return f"❌ Discord notification error: {str(e)}"
 
-    def configure(self, webhook_url):
+    def configure(self, webhook_url) -> None:
         """Configure the webhook URL"""
         self.webhook_url = webhook_url
         return f"✅ Discord webhook configured: {webhook_url[:50]}..."
 
-    def get_info(self):
+    def get_info(self) -> None:
         """Get plugin information"""
         return {
             "name": self.name,

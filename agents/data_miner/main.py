@@ -3,36 +3,43 @@ DataMiner Agent for IGED
 Data analysis and mining operations
 """
 
-import csv
 import json
 import logging
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 # Try to import data analysis libraries
 try:
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import pandas as pd
-    import seaborn as sns
 
     DATA_LIBS_AVAILABLE = True
 except ImportError as e:
+    import logging
+
+    logger = logging.getLogger(__name__)
     logger.warning(f"⚠️ Data analysis libraries not available: {e}")
     DATA_LIBS_AVAILABLE = False
 
     # Create dummy classes for type hints
     class pd:
+        """pd implementation."""
+
         class DataFrame:
+            """DataFrame implementation."""
+
             pass
 
     class np:
+        """np implementation."""
+
         pass
 
     class plt:
+        """plt implementation."""
+
         pass
 
     class sns:
+        """sns implementation."""
+
         pass
 
 
@@ -40,7 +47,10 @@ logger = logging.getLogger(__name__)
 
 
 class DataMinerAgent:
-    def __init__(self, memory_engine):
+    """DataMinerAgent implementation."""
+
+    def __init__(self, memory_engine) -> None:
+        """Init   function."""
         self.memory = memory_engine
         self.output_dir = Path("output/data_analysis")
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -324,7 +334,7 @@ class DataMinerAgent:
                 # Try to read as CSV first, then as space-separated
                 try:
                     return pd.read_csv(path_obj, sep=None, engine="python")
-                except:
+                except Exception:
                     return pd.read_csv(path_obj, sep="\t")
             else:
                 logger.warning(f"Unsupported file format: {path_obj.suffix}")

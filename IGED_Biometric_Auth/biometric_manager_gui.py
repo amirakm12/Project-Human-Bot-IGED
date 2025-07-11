@@ -4,44 +4,16 @@ IGED - Biometric Manager GUI
 PySide6-based GUI for managing biometric and WebAuthn credentials
 """
 
-import asyncio
-import json
-import os
 import sys
-import threading
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, Optional
 
 try:
-    from PySide6.QtCore import QSettings, Qt, QThread, QTimer, pyqtSignal
-    from PySide6.QtGui import QColor, QFont, QIcon, QPalette, QPixmap
-    from PySide6.QtWidgets import (
-        QAction,
-        QApplication,
-        QCheckBox,
-        QComboBox,
-        QFileDialog,
-        QGridLayout,
-        QGroupBox,
-        QHBoxLayout,
-        QHeaderView,
-        QLabel,
-        QLineEdit,
-        QMainWindow,
-        QMenu,
-        QMenuBar,
-        QMessageBox,
-        QProgressBar,
-        QPushButton,
-        QStatusBar,
-        QTableWidget,
-        QTableWidgetItem,
-        QTabWidget,
-        QTextEdit,
-        QVBoxLayout,
-        QWidget,
-    )
+                                   QFileDialog, QGridLayout, QGroupBox,
+                                   QHBoxLayout, QHeaderView, QLabel, QLineEdit,
+                                   QMainWindow, QMenu, QMenuBar, QMessageBox,
+                                   QProgressBar, QPushButton, QStatusBar,
+                                   QTableWidget, QTableWidgetItem, QTabWidget,
+                                   QTextEdit, QVBoxLayout, QWidget)
 
     PYSIDE6_AVAILABLE = True
 except ImportError:
@@ -50,9 +22,7 @@ except ImportError:
 
 # Import our modules
 try:
-    from utils.crypto_utils import CryptoManager
-    from utils.logger import setup_logger
-    from windows_hello import biometric_authenticate_sync, check_biometric_availability
+                               check_biometric_availability)
 
     WINDOWS_HELLO_AVAILABLE = True
 except ImportError as e:
@@ -69,12 +39,13 @@ class BiometricWorker(QThread):
     authentication_complete = pyqtSignal(bool, str)
     status_update = pyqtSignal(str)
 
-    def __init__(self, operation: str, reason: str = ""):
+    def __init__(self, operation: str, reason: str = "") -> None:
+        """  Init   function."""
         super().__init__()
         self.operation = operation
         self.reason = reason
 
-    def run(self):
+    def run(self) -> None:
         """Run the biometric operation"""
         try:
             if self.operation == "authenticate":
@@ -104,14 +75,15 @@ class BiometricWorker(QThread):
 class BiometricManagerGUI(QMainWindow):
     """Main GUI window for biometric credential management"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """  Init   function."""
         super().__init__()
         self.settings = QSettings("IGED", "BiometricManager")
         self.crypto_manager = CryptoManager() if "CryptoManager" in globals() else None
         self.init_ui()
         self.load_settings()
 
-    def init_ui(self):
+    def init_ui(self) -> None:
         """Initialize the user interface"""
         self.setWindowTitle("IGED Biometric Credential Manager")
         self.setMinimumSize(800, 600)
@@ -148,7 +120,7 @@ class BiometricManagerGUI(QMainWindow):
         self.progress_bar.setVisible(False)
         self.status_bar.addPermanentWidget(self.progress_bar)
 
-    def create_menu_bar(self):
+    def create_menu_bar(self) -> None:
         """Create the menu bar"""
         menubar = self.menuBar()
 
@@ -191,7 +163,7 @@ class BiometricManagerGUI(QMainWindow):
         about_action.triggered.connect(self.show_about)
         help_menu.addAction(about_action)
 
-    def create_biometric_tab(self):
+    def create_biometric_tab(self) -> None:
         """Create the biometric authentication tab"""
         tab = QWidget()
         layout = QVBoxLayout(tab)
@@ -262,7 +234,7 @@ class BiometricManagerGUI(QMainWindow):
 
         self.tab_widget.addTab(tab, "Biometric Authentication")
 
-    def create_webauthn_tab(self):
+    def create_webauthn_tab(self) -> None:
         """Create the WebAuthn management tab"""
         tab = QWidget()
         layout = QVBoxLayout(tab)
@@ -324,7 +296,7 @@ class BiometricManagerGUI(QMainWindow):
 
         self.tab_widget.addTab(tab, "WebAuthn Management")
 
-    def create_credentials_tab(self):
+    def create_credentials_tab(self) -> None:
         """Create the credentials management tab"""
         tab = QWidget()
         layout = QVBoxLayout(tab)
@@ -361,7 +333,7 @@ class BiometricManagerGUI(QMainWindow):
 
         self.tab_widget.addTab(tab, "Credentials")
 
-    def create_logs_tab(self):
+    def create_logs_tab(self) -> None:
         """Create the logs tab"""
         tab = QWidget()
         layout = QVBoxLayout(tab)
@@ -387,7 +359,7 @@ class BiometricManagerGUI(QMainWindow):
 
         self.tab_widget.addTab(tab, "Logs")
 
-    def set_dark_theme(self):
+    def set_dark_theme(self) -> None:
         """Apply dark theme to the application"""
         palette = QPalette()
         palette.setColor(QPalette.Window, QColor(53, 53, 53))
@@ -406,7 +378,7 @@ class BiometricManagerGUI(QMainWindow):
 
         self.setPalette(palette)
 
-    def check_hardware(self):
+    def check_hardware(self) -> None:
         """Check biometric hardware availability"""
         self.status_bar.showMessage("Checking biometric hardware...")
         self.progress_bar.setVisible(True)
@@ -418,7 +390,7 @@ class BiometricManagerGUI(QMainWindow):
         self.worker.status_update.connect(self.status_bar.showMessage)
         self.worker.start()
 
-    def test_authentication(self):
+    def test_authentication(self) -> None:
         """Test biometric authentication"""
         reason = self.reason_input.text()
         if not reason:
@@ -434,7 +406,7 @@ class BiometricManagerGUI(QMainWindow):
         self.worker.status_update.connect(self.status_bar.showMessage)
         self.worker.start()
 
-    def on_hardware_check_complete(self, success: bool, message: str):
+    def on_hardware_check_complete(self, success: bool, message: str) -> None:
         """Handle hardware check completion"""
         self.progress_bar.setVisible(False)
 
@@ -448,7 +420,7 @@ class BiometricManagerGUI(QMainWindow):
         self.status_bar.showMessage(message)
         self.log_message(f"Hardware check: {message}")
 
-    def on_authentication_complete(self, success: bool, message: str):
+    def on_authentication_complete(self, success: bool, message: str) -> None:
         """Handle authentication completion"""
         self.progress_bar.setVisible(False)
 
@@ -466,7 +438,7 @@ class BiometricManagerGUI(QMainWindow):
         self.status_bar.showMessage(message)
         self.log_message(f"Authentication: {message}")
 
-    def launch_iged(self):
+    def launch_iged(self) -> None:
         """Launch IGED after successful authentication"""
         try:
             # Look for IGED launcher in parent directory
@@ -488,7 +460,7 @@ class BiometricManagerGUI(QMainWindow):
                 self, "Launch Error", f"Failed to launch IGED: {str(e)}"
             )
 
-    def start_webauthn_server(self):
+    def start_webauthn_server(self) -> None:
         """Start the WebAuthn server"""
         # This would integrate with webauthn_server.py
         self.server_status_label.setText("Server: Running ✅")
@@ -498,7 +470,7 @@ class BiometricManagerGUI(QMainWindow):
         self.status_bar.showMessage("WebAuthn server started")
         self.log_message("WebAuthn server started")
 
-    def stop_webauthn_server(self):
+    def stop_webauthn_server(self) -> None:
         """Stop the WebAuthn server"""
         self.server_status_label.setText("Server: Stopped ❌")
         self.server_status_label.setStyleSheet("font-weight: bold; color: red;")
@@ -507,14 +479,14 @@ class BiometricManagerGUI(QMainWindow):
         self.status_bar.showMessage("WebAuthn server stopped")
         self.log_message("WebAuthn server stopped")
 
-    def refresh_credentials(self):
+    def refresh_credentials(self) -> None:
         """Refresh the credentials table"""
         # This would load credentials from storage
         self.credential_count_label.setText("0")
         self.status_bar.showMessage("Credentials refreshed")
         self.log_message("Credentials refreshed")
 
-    def delete_credential(self):
+    def delete_credential(self) -> None:
         """Delete selected credential"""
         current_row = self.credentials_table.currentRow()
         if current_row >= 0:
@@ -522,7 +494,7 @@ class BiometricManagerGUI(QMainWindow):
             self.status_bar.showMessage("Credential deleted")
             self.log_message("Credential deleted")
 
-    def export_credentials(self):
+    def export_credentials(self) -> None:
         """Export credentials to file"""
         filename, _ = QFileDialog.getSaveFileName(
             self, "Export Credentials", "", "JSON Files (*.json)"
@@ -532,7 +504,7 @@ class BiometricManagerGUI(QMainWindow):
             self.status_bar.showMessage("Credentials exported")
             self.log_message(f"Credentials exported to {filename}")
 
-    def import_credentials(self):
+    def import_credentials(self) -> None:
         """Import credentials from file"""
         filename, _ = QFileDialog.getOpenFileName(
             self, "Import Credentials", "", "JSON Files (*.json)"
@@ -542,12 +514,12 @@ class BiometricManagerGUI(QMainWindow):
             self.status_bar.showMessage("Credentials imported")
             self.log_message(f"Credentials imported from {filename}")
 
-    def clear_logs(self):
+    def clear_logs(self) -> None:
         """Clear the log display"""
         self.log_display.clear()
         self.status_bar.showMessage("Logs cleared")
 
-    def save_logs(self):
+    def save_logs(self) -> None:
         """Save logs to file"""
         filename, _ = QFileDialog.getSaveFileName(
             self, "Save Logs", "", "Text Files (*.txt)"
@@ -563,7 +535,7 @@ class BiometricManagerGUI(QMainWindow):
                     self, "Save Error", f"Failed to save logs: {str(e)}"
                 )
 
-    def show_about(self):
+    def show_about(self) -> None:
         """Show about dialog"""
         QMessageBox.about(
             self,
@@ -574,12 +546,12 @@ class BiometricManagerGUI(QMainWindow):
             "Supports Windows Hello and WebAuthn",
         )
 
-    def log_message(self, message: str):
+    def log_message(self, message: str) -> None:
         """Add message to log display"""
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.log_display.append(f"[{timestamp}] {message}")
 
-    def load_settings(self):
+    def load_settings(self) -> None:
         """Load application settings"""
         self.reason_input.setText(
             self.settings.value("auth_reason", "Authenticate to unlock IGED")
@@ -592,7 +564,7 @@ class BiometricManagerGUI(QMainWindow):
         )
         self.server_port_input.setText(self.settings.value("server_port", "5000"))
 
-    def save_settings(self):
+    def save_settings(self) -> None:
         """Save application settings"""
         if self.remember_reason_checkbox.isChecked():
             self.settings.setValue("auth_reason", self.reason_input.text())
@@ -602,13 +574,13 @@ class BiometricManagerGUI(QMainWindow):
         )
         self.settings.setValue("server_port", self.server_port_input.text())
 
-    def closeEvent(self, event):
+    def closeEvent(self, event) -> None:
         """Handle application close event"""
         self.save_settings()
         event.accept()
 
 
-def main():
+def main() -> None:
     """Main function"""
     if not PYSIDE6_AVAILABLE:
         print("❌ PySide6 not available. Install with: pip install PySide6")

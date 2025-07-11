@@ -4,9 +4,6 @@ IGED Biometric Authentication Setup
 Setup script for IGED Biometric Authentication Integration Suite
 """
 
-from pathlib import Path
-
-from setuptools import find_packages, setup
 
 # Read README file
 readme_path = Path("README.md")

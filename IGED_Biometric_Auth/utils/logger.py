@@ -6,16 +6,13 @@ Consistent logging across all biometric authentication components
 
 import json
 import logging
-import os
 import sys
 import threading
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict, Optional
 
 # Configure colorama for colored output
 try:
-    from colorama import Back, Fore, Style, init
 
     init(autoreset=True)
     COLORAMA_AVAILABLE = True
@@ -26,13 +23,14 @@ except ImportError:
 class IGEDLogger:
     """Unified logger for IGED biometric authentication"""
 
-    def __init__(self, name: str, log_file: Optional[Path] = None):
+    def __init__(self, name: str, log_file: Optional[Path] = None) -> None:
+        """  Init   function."""
         self.name = name
         self.log_file = log_file or Path("logs/iged_biometric.log")
         self.logger = logging.getLogger(name)
         self._setup_logger()
 
-    def _setup_logger(self):
+    def _setup_logger(self) -> None:
         """Setup logger configuration"""
         # Create logs directory
         self.log_file.parent.mkdir(exist_ok=True)
@@ -64,32 +62,32 @@ class IGEDLogger:
         file_handler.setFormatter(file_formatter)
         self.logger.addHandler(file_handler)
 
-    def debug(self, message: str, **kwargs):
+    def debug(self, message: str, **kwargs) -> None:
         """Log debug message"""
         self.logger.debug(self._format_message(message, **kwargs))
 
-    def info(self, message: str, **kwargs):
+    def info(self, message: str, **kwargs) -> None:
         """Log info message"""
         formatted_msg = self._format_message(message, **kwargs)
         self.logger.info(formatted_msg)
         if COLORAMA_AVAILABLE:
             print(f"{Fore.GREEN}{formatted_msg}{Style.RESET_ALL}")
 
-    def warning(self, message: str, **kwargs):
+    def warning(self, message: str, **kwargs) -> None:
         """Log warning message"""
         formatted_msg = self._format_message(message, **kwargs)
         self.logger.warning(formatted_msg)
         if COLORAMA_AVAILABLE:
             print(f"{Fore.YELLOW}{formatted_msg}{Style.RESET_ALL}")
 
-    def error(self, message: str, **kwargs):
+    def error(self, message: str, **kwargs) -> None:
         """Log error message"""
         formatted_msg = self._format_message(message, **kwargs)
         self.logger.error(formatted_msg)
         if COLORAMA_AVAILABLE:
             print(f"{Fore.RED}{formatted_msg}{Style.RESET_ALL}")
 
-    def critical(self, message: str, **kwargs):
+    def critical(self, message: str, **kwargs) -> None:
         """Log critical message"""
         formatted_msg = self._format_message(message, **kwargs)
         self.logger.critical(formatted_msg)
@@ -104,6 +102,7 @@ class IGEDLogger:
         return message
 
     def log_biometric_event(
+        """Log Biometric Event function."""
         self, event_type: str, success: bool, details: Optional[Dict[str, Any]] = None
     ):
         """Log biometric authentication event"""
@@ -116,6 +115,7 @@ class IGEDLogger:
             self.info(message)
 
     def log_webauthn_event(
+        """Log Webauthn Event function."""
         self,
         event_type: str,
         user_id: str,
@@ -133,6 +133,7 @@ class IGEDLogger:
         self.info(message, **event_details)
 
     def log_security_event(
+        """Log Security Event function."""
         self, event_type: str, severity: str, details: Optional[Dict[str, Any]] = None
     ):
         """Log security event"""
@@ -153,11 +154,12 @@ class IGEDLogger:
 class ThreadSafeLogger(IGEDLogger):
     """Thread-safe logger for multi-threaded applications"""
 
-    def __init__(self, name: str, log_file: Optional[Path] = None):
+    def __init__(self, name: str, log_file: Optional[Path] = None) -> None:
+        """  Init   function."""
         super().__init__(name, log_file)
         self._lock = threading.Lock()
 
-    def _log_with_lock(self, level: str, message: str, **kwargs):
+    def _log_with_lock(self, level: str, message: str, **kwargs) -> None:
         """Log message with thread lock"""
         with self._lock:
             if level == "debug":
@@ -171,23 +173,23 @@ class ThreadSafeLogger(IGEDLogger):
             elif level == "critical":
                 self.critical(message, **kwargs)
 
-    def debug(self, message: str, **kwargs):
+    def debug(self, message: str, **kwargs) -> None:
         """Thread-safe debug logging"""
         self._log_with_lock("debug", message, **kwargs)
 
-    def info(self, message: str, **kwargs):
+    def info(self, message: str, **kwargs) -> None:
         """Thread-safe info logging"""
         self._log_with_lock("info", message, **kwargs)
 
-    def warning(self, message: str, **kwargs):
+    def warning(self, message: str, **kwargs) -> None:
         """Thread-safe warning logging"""
         self._log_with_lock("warning", message, **kwargs)
 
-    def error(self, message: str, **kwargs):
+    def error(self, message: str, **kwargs) -> None:
         """Thread-safe error logging"""
         self._log_with_lock("error", message, **kwargs)
 
-    def critical(self, message: str, **kwargs):
+    def critical(self, message: str, **kwargs) -> None:
         """Thread-safe critical logging"""
         self._log_with_lock("critical", message, **kwargs)
 
@@ -195,17 +197,20 @@ class ThreadSafeLogger(IGEDLogger):
 class AuditLogger(IGEDLogger):
     """Audit logger for security and compliance events"""
 
-    def __init__(self, audit_file: Optional[Path] = None):
+    def __init__(self, audit_file: Optional[Path] = None) -> None:
+        """  Init   function."""
         audit_file = audit_file or Path("logs/audit.log")
         super().__init__("IGED_AUDIT", audit_file)
         self._setup_audit_logger()
 
-    def _setup_audit_logger(self):
+    def _setup_audit_logger(self) -> None:
         """Setup audit-specific logging"""
 
         # Create JSON formatter for audit logs
         class JSONFormatter(logging.Formatter):
-            def format(self, record):
+            """JSONFormatter implementation."""
+            def format(self, record) -> None:
+                """Format function."""
                 log_entry = {
                     "timestamp": datetime.now().isoformat(),
                     "level": record.levelname,
@@ -232,6 +237,7 @@ class AuditLogger(IGEDLogger):
                 handler.setFormatter(JSONFormatter())
 
     def log_authentication_attempt(
+        """Log Authentication Attempt function."""
         self, user_id: str, method: str, success: bool, ip_address: Optional[str] = None
     ):
         """Log authentication attempt"""
@@ -250,6 +256,7 @@ class AuditLogger(IGEDLogger):
             self.warning("Authentication failed", **extra)
 
     def log_credential_operation(
+        """Log Credential Operation function."""
         self,
         user_id: str,
         operation: str,
@@ -272,6 +279,7 @@ class AuditLogger(IGEDLogger):
             self.warning("Credential operation failed", **extra)
 
     def log_security_violation(
+        """Log Security Violation function."""
         self,
         violation_type: str,
         user_id: Optional[str] = None,
@@ -288,6 +296,7 @@ class AuditLogger(IGEDLogger):
 
 
 def setup_logger(
+    """Setup Logger function."""
     name: str, log_file: Optional[Path] = None, thread_safe: bool = False
 ) -> IGEDLogger:
     """Setup and return a logger instance"""
@@ -338,6 +347,7 @@ def get_audit_logger() -> AuditLogger:
 
 
 def log_biometric_event(
+    """Log Biometric Event function."""
     event_type: str, success: bool, details: Optional[Dict[str, Any]] = None
 ):
     """Log biometric event using global logger"""
@@ -346,6 +356,7 @@ def log_biometric_event(
 
 
 def log_webauthn_event(
+    """Log Webauthn Event function."""
     event_type: str,
     user_id: str,
     success: bool,
@@ -357,6 +368,7 @@ def log_webauthn_event(
 
 
 def log_security_event(
+    """Log Security Event function."""
     event_type: str, severity: str, details: Optional[Dict[str, Any]] = None
 ):
     """Log security event using global logger"""
@@ -365,7 +377,7 @@ def log_security_event(
 
 
 # Test functions
-def test_logger():
+def test_logger() -> None:
     """Test logger functionality"""
     print("📝 Testing IGED Logger")
     print("=" * 40)

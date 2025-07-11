@@ -8,16 +8,17 @@ import logging
 import socket
 import threading
 import time
-from pathlib import Path
 from typing import Any, Callable, Dict, Optional
 
-import requests
 
 logger = logging.getLogger(__name__)
 
 
 class AndroidLink:
-    def __init__(self, host: str = "0.0.0.0", port: int = 9090):
+    """AndroidLink implementation."""
+
+    def __init__(self, host: str = "0.0.0.0", port: int = 9090) -> None:
+        """Init   function."""
         self.host = host
         self.port = port
         self.server_socket = None
@@ -33,15 +34,15 @@ class AndroidLink:
         self.command_history = []
         self.max_history = 100
 
-    def set_command_handler(self, handler: Callable):
+    def set_command_handler(self, handler: Callable) -> None:
         """Set the command handler function"""
         self.command_handler = handler
 
-    def set_status_callback(self, callback: Callable):
+    def set_status_callback(self, callback: Callable) -> None:
         """Set the status callback function"""
         self.status_callback = callback
 
-    def start_server(self):
+    def start_server(self) -> None:
         """Start the Android link server"""
         try:
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -62,7 +63,7 @@ class AndroidLink:
             logger.error(f"❌ Failed to start Android link server: {e}")
             return False
 
-    def stop_server(self):
+    def stop_server(self) -> None:
         """Stop the Android link server"""
         self.running = False
 
@@ -70,19 +71,19 @@ class AndroidLink:
         for client in self.clients:
             try:
                 client.close()
-            except:
+            except Exception:
                 pass
 
         # Close server socket
         if self.server_socket:
             try:
                 self.server_socket.close()
-            except:
+            except Exception:
                 pass
 
         logger.info("🛑 Android link server stopped")
 
-    def _handle_clients(self):
+    def _handle_clients(self) -> None:
         """Handle incoming Android client connections"""
         while self.running:
             try:
@@ -104,7 +105,7 @@ class AndroidLink:
                 if self.running:
                     logger.error(f"❌ Client handling error: {e}")
 
-    def _handle_client(self, client_socket: socket.socket, address: tuple):
+    def _handle_client(self, client_socket: socket.socket, address: tuple) -> None:
         """Handle individual Android client"""
         try:
             # Send welcome message
@@ -155,7 +156,7 @@ class AndroidLink:
             # Clean up client
             self._remove_client(client_id, client_socket)
 
-    def _process_client_message(self, client_id: str, message: Dict[str, Any]):
+    def _process_client_message(self, client_id: str, message: Dict[str, Any]) -> None:
         """Process message from Android client"""
         try:
             msg_type = message.get("type", "unknown")
@@ -174,7 +175,7 @@ class AndroidLink:
         except Exception as e:
             logger.error(f"❌ Message processing error: {e}")
 
-    def _handle_command(self, client_id: str, message: Dict[str, Any]):
+    def _handle_command(self, client_id: str, message: Dict[str, Any]) -> None:
         """Handle command from Android client"""
         try:
             command = message.get("command", "")
@@ -214,7 +215,7 @@ class AndroidLink:
         except Exception as e:
             logger.error(f"❌ Command handling error: {e}")
 
-    def _handle_status_request(self, client_id: str):
+    def _handle_status_request(self, client_id: str) -> None:
         """Handle status request from Android client"""
         try:
             status = self._get_system_status()
@@ -230,7 +231,7 @@ class AndroidLink:
         except Exception as e:
             logger.error(f"❌ Status request handling error: {e}")
 
-    def _handle_ping(self, client_id: str):
+    def _handle_ping(self, client_id: str) -> None:
         """Handle ping from Android client"""
         try:
             response = {"type": "pong", "timestamp": time.time()}
@@ -240,7 +241,7 @@ class AndroidLink:
         except Exception as e:
             logger.error(f"❌ Ping handling error: {e}")
 
-    def _handle_voice_command(self, client_id: str, message: Dict[str, Any]):
+    def _handle_voice_command(self, client_id: str, message: Dict[str, Any]) -> None:
         """Handle voice command from Android client"""
         try:
             voice_data = message.get("voice_data", "")
@@ -282,7 +283,9 @@ class AndroidLink:
         except Exception as e:
             logger.error(f"❌ Voice command handling error: {e}")
 
-    def _send_to_client(self, client_socket: socket.socket, message: Dict[str, Any]):
+    def _send_to_client(
+        self, client_socket: socket.socket, message: Dict[str, Any]
+    ) -> None:
         """Send message to Android client"""
         try:
             data = json.dumps(message).encode("utf-8")
@@ -290,7 +293,7 @@ class AndroidLink:
         except Exception as e:
             logger.error(f"❌ Failed to send message to client: {e}")
 
-    def _remove_client(self, client_id: str, client_socket: socket.socket):
+    def _remove_client(self, client_id: str, client_socket: socket.socket) -> None:
         """Remove client from tracking"""
         try:
             # Remove from clients list
@@ -332,7 +335,7 @@ class AndroidLink:
             logger.error(f"❌ Status generation error: {e}")
             return {}
 
-    def broadcast_message(self, message: Dict[str, Any]):
+    def broadcast_message(self, message: Dict[str, Any]) -> None:
         """Broadcast message to all Android clients"""
         try:
             for client_id, client_info in self.android_clients.items():
@@ -362,7 +365,7 @@ class AndroidLink:
         """Get recent command history"""
         return self.command_history[-limit:] if self.command_history else []
 
-    def cleanup_inactive_clients(self, timeout: int = 300):
+    def cleanup_inactive_clients(self, timeout: int = 300) -> None:
         """Clean up inactive clients"""
         try:
             current_time = time.time()
@@ -402,26 +405,26 @@ class AndroidLink:
 android_link = AndroidLink()
 
 
-def start_android_link(host: str = "0.0.0.0", port: int = 9090):
+def start_android_link(host: str = "0.0.0.0", port: int = 9090) -> None:
     """Start the Android link server"""
     global android_link
     android_link = AndroidLink(host, port)
     return android_link.start_server()
 
 
-def stop_android_link():
+def stop_android_link() -> None:
     """Stop the Android link server"""
     global android_link
     android_link.stop_server()
 
 
-def set_android_command_handler(handler: Callable):
+def set_android_command_handler(handler: Callable) -> None:
     """Set the command handler for Android clients"""
     global android_link
     android_link.set_command_handler(handler)
 
 
-def set_android_status_callback(callback: Callable):
+def set_android_status_callback(callback: Callable) -> None:
     """Set the status callback for Android events"""
     global android_link
     android_link.set_status_callback(callback)

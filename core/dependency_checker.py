@@ -5,16 +5,15 @@ Checks for required and optional dependencies and provides installation guidance
 """
 
 import importlib
-import subprocess
 import sys
-from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 
 class DependencyChecker:
     """Manages dependency checking and installation guidance"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """  Init   function."""
         self.required_deps = {
             "cryptography": "Core encryption functionality",
             "flask": "Web admin interface",
@@ -62,7 +61,6 @@ class DependencyChecker:
             elif package_name == "python_nmap":
                 import nmap
             elif package_name == "speech_recognition":
-                import speech_recognition
             else:
                 importlib.import_module(package_name)
 
@@ -78,7 +76,7 @@ class DependencyChecker:
                     module = importlib.import_module(package_name)
                     version = getattr(module, "__version__", "unknown")
                 return True, f"✅ {package_name}", version
-            except:
+            except Exception:
                 return True, f"✅ {package_name}", None
 
         except ImportError:
@@ -198,7 +196,7 @@ class DependencyChecker:
             return f"pip install {' '.join(missing_deps)}"
         return "All dependencies are already installed!"
 
-    def print_status_report(self):
+    def print_status_report(self) -> None:
         """Print a comprehensive status report"""
         print("\n" + "=" * 60)
         print("🔧 IGED DEPENDENCY STATUS REPORT")
@@ -256,7 +254,7 @@ class DependencyChecker:
         print("=" * 60)
 
 
-def main():
+def main() -> None:
     """Main function for standalone execution"""
     checker = DependencyChecker()
     checker.print_status_report()

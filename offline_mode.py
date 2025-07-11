@@ -5,15 +5,16 @@ Enables completely air-gapped operation
 
 import logging
 import os
-import sys
-from pathlib import Path
 from typing import Any, Dict
 
 logger = logging.getLogger(__name__)
 
 
 class OfflineMode:
-    def __init__(self):
+    """OfflineMode implementation."""
+
+    def __init__(self) -> None:
+        """Init   function."""
         self.enabled = False
         self.blocked_domains = [
             "api.openai.com",
@@ -26,7 +27,7 @@ class OfflineMode:
         ]
         self.blocked_ports = [80, 443, 8080, 8443]
 
-    def enable(self):
+    def enable(self) -> None:
         """Enable offline mode"""
         try:
             self.enabled = True
@@ -48,7 +49,7 @@ class OfflineMode:
             logger.error(f"Failed to enable offline mode: {e}")
             return False
 
-    def disable(self):
+    def disable(self) -> None:
         """Disable offline mode"""
         try:
             self.enabled = False
@@ -67,7 +68,7 @@ class OfflineMode:
             logger.error(f"Failed to disable offline mode: {e}")
             return False
 
-    def _block_network_access(self):
+    def _block_network_access(self) -> None:
         """Block network access"""
         try:
             # This is a simplified implementation
@@ -82,7 +83,7 @@ class OfflineMode:
         except Exception as e:
             logger.error(f"Failed to block network access: {e}")
 
-    def _restore_network_access(self):
+    def _restore_network_access(self) -> None:
         """Restore network access"""
         try:
             # Remove blocking environment variables
@@ -96,13 +97,14 @@ class OfflineMode:
         except Exception as e:
             logger.error(f"Failed to restore network access: {e}")
 
-    def _disable_external_apis(self):
+    def _disable_external_apis(self) -> None:
         """Disable external API calls"""
         try:
             # Override requests module to block external calls
             import requests
 
-            def blocked_request(*args, **kwargs):
+            def blocked_request(*args, **kwargs) -> None:
+                """Blocked Request function."""
                 url = args[0] if args else kwargs.get("url", "")
                 if self._is_external_url(url):
                     raise Exception(f"External API call blocked in offline mode: {url}")
@@ -167,16 +169,16 @@ class OfflineMode:
 offline_mode = OfflineMode()
 
 
-def enable_offline_mode():
+def enable_offline_mode() -> None:
     """Enable offline mode globally"""
     return offline_mode.enable()
 
 
-def disable_offline_mode():
+def disable_offline_mode() -> None:
     """Disable offline mode globally"""
     return offline_mode.disable()
 
 
-def is_offline_mode():
+def is_offline_mode() -> None:
     """Check if offline mode is enabled"""
     return offline_mode.enabled

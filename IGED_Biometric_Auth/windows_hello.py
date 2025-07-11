@@ -6,22 +6,14 @@ Native Windows biometric authentication using WinRT APIs
 
 import asyncio
 import logging
-import os
-import sys
-from pathlib import Path
-from typing import Any, Dict, Optional
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 try:
-    from winrt.windows.foundation import IAsyncOperation
-    from winrt.windows.security.credentials.ui import (
-        UserConsentVerificationAvailability,
-        UserConsentVerificationResult,
-        UserConsentVerifier,
-    )
+        UserConsentVerificationAvailability, UserConsentVerificationResult,
+        UserConsentVerifier)
 
     WINDOWS_HELLO_AVAILABLE = True
 except ImportError:
@@ -32,7 +24,8 @@ except ImportError:
 class WindowsHelloManager:
     """Manages Windows Hello biometric authentication"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """  Init   function."""
         self.availability = None
         self.verification_result = None
         self._initialized = False
@@ -63,6 +56,7 @@ class WindowsHelloManager:
         return self.availability
 
     async def request_verification(
+        """Request Verification function."""
         self, reason: str = "Authenticate to unlock IGED"
     ) -> UserConsentVerificationResult:
         """Request biometric verification from user"""
@@ -163,6 +157,7 @@ def biometric_authenticate_sync(reason: str = "Authenticate to unlock IGED") -> 
 
 
 async def biometric_authenticate_async(
+    """Biometric Authenticate Async function."""
     reason: str = "Authenticate to unlock IGED",
 ) -> bool:
     """
@@ -206,7 +201,7 @@ def check_biometric_availability() -> bool:
 
 
 # Legacy function names for backward compatibility
-async def check_biometric_availability_async():
+async def check_biometric_availability_async() -> None:
     """Legacy async function for checking availability"""
     if not WINDOWS_HELLO_AVAILABLE:
         return False
@@ -217,7 +212,7 @@ async def check_biometric_availability_async():
     return availability != UserConsentVerificationAvailability.UNAVAILABLE
 
 
-async def request_biometric_verification(reason: str = "Authenticate to unlock IGED"):
+async def request_biometric_verification(reason: str = "Authenticate to unlock IGED") -> None:
     """Legacy async function for requesting verification"""
     if not WINDOWS_HELLO_AVAILABLE:
         return UserConsentVerificationResult.CANCELED
@@ -227,13 +222,13 @@ async def request_biometric_verification(reason: str = "Authenticate to unlock I
     return await manager.request_verification(reason)
 
 
-def biometric_authenticate_sync_legacy():
+def biometric_authenticate_sync_legacy() -> None:
     """Legacy synchronous authentication function"""
     return biometric_authenticate_sync()
 
 
 # Test function
-def test_windows_hello():
+def test_windows_hello() -> None:
     """Test Windows Hello functionality"""
     print("🔐 Testing Windows Hello Biometric Authentication")
     print("=" * 50)

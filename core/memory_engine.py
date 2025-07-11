@@ -7,14 +7,15 @@ import json
 import logging
 import time
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
 
 class MemoryEngine:
-    def __init__(self, encryption_manager):
+    """MemoryEngine implementation."""
+    def __init__(self, encryption_manager) -> None:
+        """  Init   function."""
         self.encryption = encryption_manager
         self.memory_file = Path("memory/memory_log.json")
         self.memory_file.parent.mkdir(parents=True, exist_ok=True)
@@ -31,7 +32,7 @@ class MemoryEngine:
                         try:
                             decrypted = self.encryption.decrypt(data)
                             return json.loads(decrypted)
-                        except:
+                        except Exception:
                             # If decryption fails, try as plain JSON
                             return json.loads(data)
             return []
@@ -39,7 +40,7 @@ class MemoryEngine:
             logger.error(f"❌ Failed to load memory: {e}")
             return []
 
-    def save_memory(self):
+    def save_memory(self) -> None:
         """Save memory to encrypted file"""
         try:
             data = json.dumps(self.memory_data, indent=2, ensure_ascii=False)
@@ -54,6 +55,7 @@ class MemoryEngine:
             logger.error(f"❌ Failed to save memory: {e}")
 
     def add_entry(
+        """Add Entry function."""
         self,
         command: str,
         result: str,
@@ -134,7 +136,7 @@ class MemoryEngine:
             logger.error(f"❌ Failed to delete memory entry: {e}")
             return False
 
-    def clear_memory(self):
+    def clear_memory(self) -> None:
         """Clear all memory entries"""
         try:
             self.memory_data = []

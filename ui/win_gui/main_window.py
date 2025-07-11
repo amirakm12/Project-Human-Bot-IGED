@@ -6,16 +6,16 @@ Main window for the IGED assistant
 import logging
 import queue
 import threading
-import time
-import tkinter as tk
 from datetime import datetime
-from tkinter import messagebox, scrolledtext, ttk
 
 logger = logging.getLogger(__name__)
 
 
 class IGEDGUI:
-    def __init__(self, components):
+    """IGEDGUI implementation."""
+
+    def __init__(self, components) -> None:
+        """Init   function."""
         self.components = components
         self.root = tk.Tk()
         self.setup_gui()
@@ -28,7 +28,7 @@ class IGEDGUI:
         )
         self.message_thread.start()
 
-    def setup_gui(self):
+    def setup_gui(self) -> None:
         """Setup the GUI interface"""
         self.root.title("IGED - Project Human Bot")
         self.root.geometry("1000x700")
@@ -74,7 +74,7 @@ class IGEDGUI:
         # Bind close event
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-    def create_main_tab(self):
+    def create_main_tab(self) -> None:
         """Create the main interface tab"""
         main_tab = ttk.Frame(self.notebook)
         self.notebook.add(main_tab, text="🎯 Main Interface")
@@ -150,7 +150,7 @@ class IGEDGUI:
         self.status_label = tk.Label(main_tab, text="Ready", bg="#2b2b2b", fg="#888888")
         self.status_label.pack(side=tk.BOTTOM, fill=tk.X, padx=10, pady=5)
 
-    def create_memory_tab(self):
+    def create_memory_tab(self) -> None:
         """Create the memory tab"""
         memory_tab = ttk.Frame(self.notebook)
         self.notebook.add(memory_tab, text="🧠 Memory")
@@ -212,7 +212,7 @@ class IGEDGUI:
         # Load initial memory
         self.load_memory()
 
-    def create_status_tab(self):
+    def create_status_tab(self) -> None:
         """Create the system status tab"""
         status_tab = ttk.Frame(self.notebook)
         self.notebook.add(status_tab, text="📊 System Status")
@@ -253,7 +253,7 @@ class IGEDGUI:
         # Load initial status
         self.refresh_status()
 
-    def create_settings_tab(self):
+    def create_settings_tab(self) -> None:
         """Create the settings tab"""
         settings_tab = ttk.Frame(self.notebook)
         self.notebook.add(settings_tab, text="⚙️ Settings")
@@ -317,7 +317,7 @@ class IGEDGUI:
         )
         offline_check.pack(anchor=tk.W, padx=10, pady=5)
 
-    def execute_command(self, event=None):
+    def execute_command(self, event=None) -> None:
         """Execute a command"""
         command = self.command_entry.get().strip()
         if not command:
@@ -331,7 +331,7 @@ class IGEDGUI:
             target=self._execute_command_thread, args=(command,), daemon=True
         ).start()
 
-    def _execute_command_thread(self, command):
+    def _execute_command_thread(self, command) -> None:
         """Execute command in background thread"""
         try:
             # Process command through voice pipeline
@@ -343,7 +343,7 @@ class IGEDGUI:
         except Exception as e:
             self.log_output(f"❌ Command execution error: {e}")
 
-    def toggle_voice(self):
+    def toggle_voice(self) -> None:
         """Toggle voice listening"""
         try:
             if "voice" in self.components:
@@ -362,11 +362,11 @@ class IGEDGUI:
         except Exception as e:
             self.log_output(f"❌ Voice toggle error: {e}")
 
-    def clear_output(self):
+    def clear_output(self) -> None:
         """Clear the output text area"""
         self.output_text.delete(1.0, tk.END)
 
-    def log_output(self, message):
+    def log_output(self, message) -> None:
         """Add message to output"""
         timestamp = datetime.now().strftime("%H:%M:%S")
         formatted_message = f"[{timestamp}] {message}\n"
@@ -374,7 +374,7 @@ class IGEDGUI:
         # Add to queue for thread-safe update
         self.message_queue.put(formatted_message)
 
-    def _process_messages(self):
+    def _process_messages(self) -> None:
         """Process messages from queue"""
         while self.running:
             try:
@@ -386,7 +386,7 @@ class IGEDGUI:
             except Exception as e:
                 logger.error(f"Message processing error: {e}")
 
-    def load_memory(self):
+    def load_memory(self) -> None:
         """Load memory entries into tree view"""
         try:
             # Clear existing items
@@ -410,7 +410,7 @@ class IGEDGUI:
         except Exception as e:
             logger.error(f"Failed to load memory: {e}")
 
-    def search_memory(self):
+    def search_memory(self) -> None:
         """Search memory entries"""
         query = self.search_entry.get().strip()
         if not query:
@@ -439,7 +439,7 @@ class IGEDGUI:
         except Exception as e:
             logger.error(f"Failed to search memory: {e}")
 
-    def on_memory_select(self, event):
+    def on_memory_select(self, event) -> None:
         """Handle memory item selection"""
         selection = self.memory_tree.selection()
         if not selection:
@@ -468,7 +468,7 @@ class IGEDGUI:
         except Exception as e:
             logger.error(f"Failed to load memory details: {e}")
 
-    def refresh_status(self):
+    def refresh_status(self) -> None:
         """Refresh system status"""
         try:
             # System info
@@ -503,7 +503,7 @@ class IGEDGUI:
         except Exception as e:
             logger.error(f"Failed to refresh status: {e}")
 
-    def clear_all_memory(self):
+    def clear_all_memory(self) -> None:
         """Clear all memory entries"""
         if messagebox.askyesno("Confirm", "Are you sure you want to clear all memory?"):
             try:
@@ -514,7 +514,7 @@ class IGEDGUI:
             except Exception as e:
                 self.log_output(f"❌ Failed to clear memory: {e}")
 
-    def export_memory(self):
+    def export_memory(self) -> None:
         """Export memory to file"""
         try:
             if "memory" in self.components:
@@ -529,12 +529,12 @@ class IGEDGUI:
         except Exception as e:
             self.log_output(f"❌ Export error: {e}")
 
-    def on_closing(self):
+    def on_closing(self) -> None:
         """Handle window closing"""
         self.running = False
         self.root.destroy()
 
-    def run(self):
+    def run(self) -> None:
         """Start the GUI"""
         try:
             self.log_output("🚀 IGED GUI started")

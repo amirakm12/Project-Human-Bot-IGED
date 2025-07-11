@@ -7,10 +7,9 @@ Comprehensive script to add all project files and folders
 import os
 import subprocess
 import sys
-from pathlib import Path
 
 
-def run_command(command, description):
+def run_command(command, description) -> None:
     """Run a git command and return success status"""
     print(f"🔄 {description}...")
     try:
@@ -26,7 +25,7 @@ def run_command(command, description):
         return False, str(e)
 
 
-def get_file_count():
+def get_file_count() -> None:
     """Count total files in the project"""
     count = 0
     for root, dirs, files in os.walk("."):
@@ -37,7 +36,8 @@ def get_file_count():
     return count
 
 
-def main():
+def main() -> None:
+    """Main function."""
     print("🚀 IGED - Add ALL Files to GitHub Repository")
     print("=" * 60)
     print()
@@ -122,7 +122,8 @@ Total files: {file_count}"""
         )
         if not success:
             print(
-                "❌ Failed to push to GitHub. Please check your credentials and try again."
+                "❌ Failed to push to GitHub. Please check your credentials and \
+                    try again."
             )
             sys.exit(1)
 

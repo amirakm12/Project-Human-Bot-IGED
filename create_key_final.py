@@ -5,18 +5,16 @@ IGED - Final Encryption Key Generator (Enterprise-Hardened)
 
 import argparse
 import base64
-import os
 import stat
 import subprocess
 import sys
 from datetime import datetime
-from pathlib import Path
-from tempfile import NamedTemporaryFile
 
 LOG_PATH = Path("logs/encryption.log")
 
 
-def log(msg):
+def log(msg) -> None:
+    """Log function."""
     print(msg)
     try:
         LOG_PATH.parent.mkdir(exist_ok=True)
@@ -26,13 +24,12 @@ def log(msg):
         pass
 
 
-def create_encryption_key(force=False):
+def create_encryption_key(force=False) -> None:
     """Create encryption key with security and fallback mechanisms"""
 
     log("🔑 Starting IGED Encryption Key Generation")
 
     try:
-        from cryptography.fernet import Fernet
 
         log("✅ Cryptography module loaded")
     except ImportError as e:
@@ -99,7 +96,8 @@ def create_encryption_key(force=False):
         return False
 
 
-def main():
+def main() -> None:
+    """Main function."""
     parser = argparse.ArgumentParser(description="IGED Encryption Key Generator")
     parser.add_argument(
         "--force",

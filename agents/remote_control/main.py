@@ -3,23 +3,18 @@ Remote Control Agent for IGED
 Remote device control and system management
 """
 
-import base64
 import json
 import logging
-import os
-import socket
-import struct
-import subprocess
-import threading
 import time
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
 
 class RemoteControlAgent:
-    def __init__(self, memory_engine):
+    """RemoteControlAgent implementation."""
+    def __init__(self, memory_engine) -> None:
+        """  Init   function."""
         self.memory = memory_engine
         self.output_dir = Path("output/remote_control")
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -274,6 +269,7 @@ class RemoteControlAgent:
             return "custom"
 
     def _create_connection(
+        """ Create Connection function."""
         self, target_info: Dict[str, str], protocol: str
     ) -> Optional[Dict[str, Any]]:
         """Create connection to target"""
@@ -337,7 +333,7 @@ class RemoteControlAgent:
         except Exception as e:
             return f"Command failed: {e}"
 
-    def _log_command_execution(self, host: str, command: str, result: str):
+    def _log_command_execution(self, host: str, command: str, result: str) -> None:
         """Log command execution"""
         log_entry = {
             "host": host,
@@ -376,6 +372,7 @@ class RemoteControlAgent:
             return "ls -la"  # Default command
 
     def _establish_monitoring_connection(
+        """ Establish Monitoring Connection function."""
         self, target_info: Dict[str, str]
     ) -> Optional[Dict[str, Any]]:
         """Establish monitoring connection"""
@@ -448,12 +445,14 @@ class RemoteControlAgent:
         return f"Delivery channel established to {target_info['host']}:{target_info['port']}"
 
     def _deploy_payload_to_target(
+        """ Deploy Payload To Target function."""
         self, target_info: Dict[str, str], payload: str
     ) -> str:
         """Deploy payload to target"""
         return f"Payload deployed successfully to {target_info['host']}"
 
     def _verify_payload_deployment(
+        """ Verify Payload Deployment function."""
         self, target_info: Dict[str, str], payload_info: Dict[str, str]
     ) -> str:
         """Verify payload deployment"""

@@ -21,7 +21,10 @@ logger = logging.getLogger(__name__)
 
 
 class Watchdog:
-    def __init__(self, components):
+    """Watchdog implementation."""
+
+    def __init__(self, components) -> None:
+        """Init   function."""
         self.components = components
         self.running = False
         self.monitoring_thread = None
@@ -31,7 +34,7 @@ class Watchdog:
         # Initialize health checks
         self.setup_health_checks()
 
-    def setup_health_checks(self):
+    def setup_health_checks(self) -> None:
         """Setup system health checks"""
         self.health_checks = [
             self._check_system_resources,
@@ -40,7 +43,7 @@ class Watchdog:
             self._check_disk_space,
         ]
 
-    def run(self):
+    def run(self) -> None:
         """Start the watchdog monitoring"""
         if self.running:
             logger.warning("Watchdog already running")
@@ -53,12 +56,12 @@ class Watchdog:
         self.monitoring_thread.start()
         logger.info("🔄 Watchdog monitoring started")
 
-    def stop(self):
+    def stop(self) -> None:
         """Stop the watchdog monitoring"""
         self.running = False
         logger.info("🛑 Watchdog monitoring stopped")
 
-    def _monitoring_loop(self):
+    def _monitoring_loop(self) -> None:
         """Main monitoring loop"""
         while self.running:
             try:
@@ -79,7 +82,7 @@ class Watchdog:
                 logger.error(f"Watchdog monitoring error: {e}")
                 time.sleep(60)  # Wait longer on error
 
-    def _check_system_resources(self):
+    def _check_system_resources(self) -> None:
         """Check system resource usage"""
         try:
             if not PSUTIL_AVAILABLE:
@@ -109,7 +112,7 @@ class Watchdog:
         except Exception as e:
             logger.error(f"System resource check failed: {e}")
 
-    def _check_component_health(self):
+    def _check_component_health(self) -> None:
         """Check component health"""
         try:
             component_status = {}
@@ -148,7 +151,7 @@ class Watchdog:
         except Exception as e:
             logger.error(f"Component health check failed: {e}")
 
-    def _check_memory_usage(self):
+    def _check_memory_usage(self) -> None:
         """Check memory engine usage"""
         try:
             if "memory" in self.components:
@@ -168,7 +171,7 @@ class Watchdog:
         except Exception as e:
             logger.error(f"Memory usage check failed: {e}")
 
-    def _check_disk_space(self):
+    def _check_disk_space(self) -> None:
         """Check disk space for output files"""
         try:
             output_dirs = ["output", "memory", "logs"]
@@ -202,7 +205,7 @@ class Watchdog:
         except Exception as e:
             logger.error(f"Disk space check failed: {e}")
 
-    def _update_system_stats(self):
+    def _update_system_stats(self) -> None:
         """Update system statistics"""
         try:
             if not PSUTIL_AVAILABLE:

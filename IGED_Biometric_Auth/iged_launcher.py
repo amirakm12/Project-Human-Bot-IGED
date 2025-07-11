@@ -4,20 +4,18 @@ IGED - Secure Biometric Launcher
 Launches IGED only after successful biometric authentication
 """
 
-import os
 import subprocess
 import sys
 import threading
 import time
-from pathlib import Path
-from typing import Any, Dict, Optional
 
 # Import biometric modules
 try:
-    from PySide6.QtCore import Qt, QTimer
-    from PySide6.QtGui import QFont
-    from PySide6.QtWidgets import QApplication, QLabel, QMessageBox, QProgressDialog
-    from windows_hello import biometric_authenticate_sync, check_biometric_availability
+    from pathlib import Path
+    from PySide6.QtCore import Qt
+    from PySide6.QtWidgets import QApplication, QMessageBox, QProgressDialog
+    from utils.biometric_authenticator import biometric_authenticate_sync
+    from utils.hardware_detector import check_biometric_availability
 
     BIOMETRIC_AVAILABLE = True
 except ImportError as e:
@@ -28,7 +26,8 @@ except ImportError as e:
 class SecureIGEDLauncher:
     """Secure launcher for IGED with biometric authentication"""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """  Init   function."""
         self.iged_path = None
         self.iged_process = None
         self.auth_attempts = 0
@@ -39,7 +38,7 @@ class SecureIGEDLauncher:
         # Find IGED installation
         self.find_iged_installation()
 
-    def find_iged_installation(self):
+    def find_iged_installation(self) -> None:
         """Find IGED installation directory"""
         possible_paths = [
             Path("../launcher.py"),  # Parent directory
@@ -150,7 +149,8 @@ class SecureIGEDLauncher:
         # Set up timer to check authentication
         auth_result = [None]
 
-        def check_auth():
+        def check_auth() -> None:
+            """Check Auth function."""
             try:
                 if check_biometric_availability():
                     success = biometric_authenticate_sync("Authenticate to unlock IGED")
@@ -211,7 +211,7 @@ class SecureIGEDLauncher:
             return False
 
 
-def show_error_dialog(message: str):
+def show_error_dialog(message: str) -> None:
     """Show error dialog"""
     try:
         app = QApplication.instance()
@@ -230,7 +230,7 @@ def show_error_dialog(message: str):
         print(f"❌ {message}")
 
 
-def show_success_dialog():
+def show_success_dialog() -> None:
     """Show success dialog"""
     try:
         app = QApplication.instance()
@@ -248,7 +248,7 @@ def show_success_dialog():
         pass
 
 
-def main():
+def main() -> None:
     """Main function"""
     print("🔐 IGED Secure Biometric Launcher")
     print("=" * 40)

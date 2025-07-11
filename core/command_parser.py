@@ -11,7 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 class CommandParser:
-    def __init__(self):
+    """CommandParser implementation."""
+
+    def __init__(self) -> None:
+        """Init   function."""
         self.command_patterns = {
             "codegen": [
                 r"(?:generate|create|make|build)\s+(?:a\s+)?(?:flask|web|python|script|api|rest|html|website)",

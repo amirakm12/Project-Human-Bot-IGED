@@ -10,16 +10,10 @@ import json
 import os
 import secrets
 from datetime import datetime, timedelta
-from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
 try:
-    from cryptography.fernet import Fernet
-    from cryptography.hazmat.backends import default_backend
-    from cryptography.hazmat.primitives import hashes, serialization
-    from cryptography.hazmat.primitives.asymmetric import padding, rsa
-    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-    from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+                                                        modes)
 
     CRYPTOGRAPHY_AVAILABLE = True
 except ImportError:
@@ -30,7 +24,8 @@ except ImportError:
 class CryptoManager:
     """Manages cryptographic operations for IGED biometric authentication"""
 
-    def __init__(self, key_file: Optional[Path] = None):
+    def __init__(self, key_file: Optional[Path] = None) -> None:
+        """  Init   function."""
         self.key_file = key_file or Path("config/secret.key")
         self.fernet = None
         self.rsa_private_key = None
@@ -40,7 +35,7 @@ class CryptoManager:
         # Initialize cryptography
         self._initialize_crypto()
 
-    def _initialize_crypto(self):
+    def _initialize_crypto(self) -> None:
         """Initialize cryptographic components"""
         if not CRYPTOGRAPHY_AVAILABLE:
             print("❌ Cryptography library not available")
@@ -69,7 +64,7 @@ class CryptoManager:
         except Exception as e:
             print(f"❌ Failed to initialize cryptography: {e}")
 
-    def _generate_rsa_keys(self):
+    def _generate_rsa_keys(self) -> None:
         """Generate RSA key pair"""
         try:
             # Generate private key
@@ -163,6 +158,7 @@ class CryptoManager:
             return None
 
     def hash_data(
+        """Hash Data function."""
         self, data: Union[str, bytes], algorithm: str = "sha256"
     ) -> Optional[str]:
         """Hash data using specified algorithm"""
@@ -191,6 +187,7 @@ class CryptoManager:
         return secrets.token_urlsafe(length)
 
     def derive_key_from_password(
+        """Derive Key From Password function."""
         self, password: str, salt: Optional[bytes] = None
     ) -> Optional[bytes]:
         """Derive a key from password using PBKDF2"""
@@ -231,6 +228,7 @@ class CryptoManager:
             return None
 
     def decrypt_credentials(
+        """Decrypt Credentials function."""
         self, encrypted_credentials: str
     ) -> Optional[Dict[str, Any]]:
         """Decrypt credential data"""
@@ -408,7 +406,7 @@ def restore_secure_backup(backup_path: Path) -> Optional[Dict[str, Any]]:
 
 
 # Test functions
-def test_crypto_manager():
+def test_crypto_manager() -> None:
     """Test cryptographic manager functionality"""
     print("🔐 Testing Cryptographic Manager")
     print("=" * 40)

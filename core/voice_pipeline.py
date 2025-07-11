@@ -7,11 +7,9 @@ import logging
 import queue
 import threading
 import time
-from typing import Callable, Optional
 
 # Try to import voice recognition libraries
 try:
-    import speech_recognition as sr
 
     SPEECH_RECOGNITION_AVAILABLE = True
 except ImportError:
@@ -28,7 +26,10 @@ logger = logging.getLogger(__name__)
 
 
 class VoicePipeline:
-    def __init__(self, command_parser, orchestrator, memory_engine):
+    """VoicePipeline implementation."""
+
+    def __init__(self, command_parser, orchestrator, memory_engine) -> None:
+        """Init   function."""
         self.parser = command_parser
         self.orchestrator = orchestrator
         self.memory = memory_engine
@@ -45,7 +46,7 @@ class VoicePipeline:
         # Initialize Whisper model
         self.initialize_whisper()
 
-    def initialize_whisper(self):
+    def initialize_whisper(self) -> None:
         """Initialize Whisper model for offline speech recognition"""
         try:
             logger.info("🎤 Initializing Whisper model...")
@@ -55,7 +56,7 @@ class VoicePipeline:
             logger.error(f"❌ Failed to load Whisper model: {e}")
             self.whisper_model = None
 
-    def start_listening(self):
+    def start_listening(self) -> None:
         """Start continuous voice listening"""
         if self.is_listening:
             logger.warning("🎤 Already listening")
@@ -77,12 +78,12 @@ class VoicePipeline:
         # Start microphone listening
         self._listen_microphone()
 
-    def stop_listening(self):
+    def stop_listening(self) -> None:
         """Stop voice listening"""
         self.is_listening = False
         logger.info("🛑 Voice listening stopped")
 
-    def _listen_microphone(self):
+    def _listen_microphone(self) -> None:
         """Listen to microphone input"""
         if not SPEECH_RECOGNITION_AVAILABLE or not self.recognizer:
             logger.error("❌ Speech recognition not available")
@@ -110,7 +111,7 @@ class VoicePipeline:
         except Exception as e:
             logger.error(f"❌ Failed to initialize microphone: {e}")
 
-    def _audio_processing_loop(self):
+    def _audio_processing_loop(self) -> None:
         """Process audio from queue"""
         while self.is_listening:
             try:
@@ -121,7 +122,7 @@ class VoicePipeline:
             except Exception as e:
                 logger.error(f"❌ Audio processing error: {e}")
 
-    def _process_audio(self, audio):
+    def _process_audio(self, audio) -> None:
         """Process audio and convert to text"""
         try:
             # Try Whisper first (offline)
@@ -183,7 +184,7 @@ class VoicePipeline:
             logger.error(f"❌ Speech recognition service error: {e}")
             return ""
 
-    def _handle_transcription(self, text: str):
+    def _handle_transcription(self, text: str) -> None:
         """Handle transcribed text"""
         try:
             # Parse command
@@ -216,7 +217,7 @@ class VoicePipeline:
                 command=text, result=f"Error: {str(e)}", agent="unknown", success=False
             )
 
-    def _callback_processing_loop(self):
+    def _callback_processing_loop(self) -> None:
         """Process callbacks for UI updates"""
         while self.is_listening:
             try:
@@ -227,7 +228,7 @@ class VoicePipeline:
             except Exception as e:
                 logger.error(f"❌ Callback processing error: {e}")
 
-    def _process_callback(self, callback):
+    def _process_callback(self, callback) -> None:
         """Process callback for UI update"""
         try:
             # This will be handled by the GUI
@@ -235,7 +236,7 @@ class VoicePipeline:
         except Exception as e:
             logger.error(f"❌ Callback processing failed: {e}")
 
-    def process_text_command(self, text: str):
+    def process_text_command(self, text: str) -> None:
         """Process text command directly"""
         try:
             logger.info(f"⌨️ Processing text command: {text}")
