@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IGED - Web Admin Panel</title>
+    <link rel="icon" type="image/svg+xml" href="../../assets/icons/icon-iged-favicon.svg">
+    <link rel="stylesheet" href="../../assets/styles/iged-theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        /* Custom styles for admin panel */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--color-bg-primary);
+            background-image: 
+                radial-gradient(circle at 20% 20%, var(--color-accent-secondary) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--color-accent-primary) 0%, transparent 50%);
+            background-attachment: fixed;
             min-height: 100vh;
-            color: #333;
         }
         
         .container {
@@ -25,17 +24,28 @@
         }
         
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            background: var(--color-bg-secondary);
+            background-image: url('../../designs/logos/iged-logo-full.svg');
+            background-repeat: no-repeat;
+            background-position: 20px center;
+            background-size: 200px auto;
+            padding: var(--spacing-xl);
+            padding-left: 240px;
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: left;
         }
         
         .header h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-2xl);
+            background: var(--color-accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .status-indicator {
@@ -52,22 +62,21 @@
         .dashboard {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
         }
         
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .card h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 5px;
+        .output-area {
+            background: var(--color-bg-input);
+            color: var(--color-text-terminal);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-family: var(--font-family-mono);
+            font-size: var(--font-size-sm);
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid var(--color-bg-tertiary);
         }
         
         .command-section {
@@ -97,38 +106,27 @@
             border-color: #667eea;
         }
         
-        .btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
+        .command-input {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
         }
         
-        .btn-primary {
-            background: #667eea;
-            color: white;
+        .command-input input {
+            flex: 1;
+            padding: var(--spacing-md);
+            border: 2px solid var(--color-bg-tertiary);
+            border-radius: var(--radius-md);
+            background: var(--color-bg-input);
+            color: var(--color-text-primary);
+            font-family: var(--font-family-primary);
+            font-size: var(--font-size-base);
         }
         
-        .btn-primary:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
-        }
-        
-        .btn-success {
-            background: #27ae60;
-            color: white;
-        }
-        
-        .btn-danger {
-            background: #e74c3c;
-            color: white;
-        }
-        
-        .btn-warning {
-            background: #f39c12;
-            color: white;
+        .command-input input:focus {
+            outline: none;
+            border-color: var(--color-accent-primary);
+            box-shadow: 0 0 0 3px var(--color-focus);
         }
         
         .memory-list {
@@ -267,36 +265,57 @@
             </div>
         </div>
         
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
-            <button class="tab" onclick="showTab('commands')">🎯 Commands</button>
-            <button class="tab" onclick="showTab('memory')">🧠 Memory</button>
-            <button class="tab" onclick="showTab('status')">📈 Status</button>
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">
+                <img src="../../designs/icons/navigation/icon-nav-home.svg" class="iged-icon-sm" style="margin-right: 6px;">
+                Dashboard
+            </button>
+            <button class="nav-tab" onclick="showTab('commands')">
+                <img src="../../designs/icons/features/icon-feature-terminal.svg" class="iged-icon-sm" style="margin-right: 6px;">
+                Commands
+            </button>
+            <button class="nav-tab" onclick="showTab('memory')">
+                <img src="../../designs/icons/features/icon-feature-brain.svg" class="iged-icon-sm" style="margin-right: 6px;">
+                Memory
+            </button>
+            <button class="nav-tab" onclick="showTab('status')">
+                <img src="../../designs/icons/navigation/icon-nav-settings.svg" class="iged-icon-sm" style="margin-right: 6px;">
+                Status
+            </button>
         </div>
         
         <!-- Dashboard Tab -->
         <div id="dashboard" class="tab-content active">
             <div class="dashboard">
                 <div class="card">
-                    <h3>🚀 Quick Actions</h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <button class="btn btn-primary" onclick="toggleVoice()">🎤 Toggle Voice</button>
-                        <button class="btn btn-success" onclick="refreshStatus()">🔄 Refresh Status</button>
-                        <button class="btn btn-warning" onclick="clearMemory()">🗑️ Clear Memory</button>
+                    <h3 class="card-title">🚀 Quick Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                        <button class="btn btn-primary" onclick="toggleVoice()">
+                            <img src="../../designs/icons/actions/icon-action-microphone.svg" class="iged-icon" style="margin-right: 8px;">
+                            Toggle Voice
+                        </button>
+                        <button class="btn btn-success" onclick="refreshStatus()">
+                            <img src="../../designs/icons/actions/icon-action-refresh.svg" class="iged-icon" style="margin-right: 8px;">
+                            Refresh Status
+                        </button>
+                        <button class="btn btn-warning" onclick="clearMemory()">
+                            <img src="../../designs/icons/actions/icon-action-delete.svg" class="iged-icon" style="margin-right: 8px;">
+                            Clear Memory
+                        </button>
                     </div>
                 </div>
                 
                 <div class="card">
-                    <h3>📊 System Stats</h3>
+                    <h3 class="card-title">📊 System Stats</h3>
                     <div class="status-grid" id="system-stats">
-                        <div class="loading">Loading...</div>
+                        <div class="loading animate-pulse">Loading...</div>
                     </div>
                 </div>
                 
                 <div class="card">
-                    <h3>🤖 Active Agents</h3>
+                    <h3 class="card-title">🤖 Active Agents</h3>
                     <div id="agents-list">
-                        <div class="loading">Loading...</div>
+                        <div class="loading animate-pulse">Loading...</div>
                     </div>
                 </div>
             </div>
