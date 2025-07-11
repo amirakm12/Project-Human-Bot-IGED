@@ -1,0 +1,178 @@
+{
+  "timestamp": "2025-07-11T13:35:07.155475",
+  "total_assets": 11,
+  "categories": {
+    "logos": {
+      "count": 1,
+      "exported": [
+        {
+          "name": "iged-logo-full",
+          "source": "/workspace/designs/logos/iged-logo-full.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/iged-logo-full.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/iged-logo-full@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/iged-logo-full@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/iged-logo-full.webp"
+          ]
+        }
+      ]
+    },
+    "icons": {
+      "count": 9,
+      "exported": [
+        {
+          "name": "icon-nav-home",
+          "source": "/workspace/designs/icons/navigation/icon-nav-home.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-home.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-home@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-home@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/icon-nav-home.webp"
+          ]
+        },
+        {
+          "name": "icon-nav-settings",
+          "source": "/workspace/designs/icons/navigation/icon-nav-settings.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-settings.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-settings@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-settings@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/icon-nav-settings.webp"
+          ]
+        },
+        {
+          "name": "icon-action-microphone",
+          "source": "/workspace/designs/icons/actions/icon-action-microphone.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-action-microphone.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-action-microphone@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-action-microphone@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/icon-action-microphone.webp"
+          ]
+        },
+        {
+          "name": "icon-action-refresh",
+          "source": "/workspace/designs/icons/actions/icon-action-refresh.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-action-refresh.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-action-refresh@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-action-refresh@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/icon-action-refresh.webp"
+          ]
+        },
+        {
+          "name": "icon-action-delete",
+          "source": "/workspace/designs/icons/actions/icon-action-delete.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-action-delete.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-action-delete@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-action-delete@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/icon-action-delete.webp"
+          ]
+        },
+        {
+          "name": "icon-feature-brain",
+          "source": "/workspace/designs/icons/features/icon-feature-brain.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-brain.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-brain@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-brain@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/icon-feature-brain.webp"
+          ]
+        },
+        {
+          "name": "icon-feature-terminal",
+          "source": "/workspace/designs/icons/features/icon-feature-terminal.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-terminal.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-terminal@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-terminal@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/icon-feature-terminal.webp"
+          ]
+        },
+        {
+          "name": "icon-status-success",
+          "source": "/workspace/designs/icons/status/icon-status-success.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-status-success.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-status-success@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-status-success@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/icon-status-success.webp"
+          ]
+        },
+        {
+          "name": "icon-status-warning",
+          "source": "/workspace/designs/icons/status/icon-status-warning.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-status-warning.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-status-warning@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/icon-status-warning@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/icon-status-warning.webp"
+          ]
+        }
+      ]
+    },
+    "illustrations": {
+      "count": 1,
+      "exported": [
+        {
+          "name": "hero-ai-assistant",
+          "source": "/workspace/designs/illustrations/hero-ai-assistant.svg",
+          "exports": [
+            "/workspace/hydra-shell/vega-compiler/output/png/hero-ai-assistant.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/hero-ai-assistant@2x.png",
+            "/workspace/hydra-shell/vega-compiler/output/png/hero-ai-assistant@3x.png",
+            "/workspace/hydra-shell/vega-compiler/output/webp/hero-ai-assistant.webp"
+          ]
+        }
+      ]
+    }
+  },
+  "exported_files": [
+    "/workspace/hydra-shell/vega-compiler/output/png/iged-logo-full.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/iged-logo-full@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/iged-logo-full@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/iged-logo-full.webp",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-home.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-home@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-home@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/icon-nav-home.webp",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-settings.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-settings@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-nav-settings@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/icon-nav-settings.webp",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-action-microphone.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-action-microphone@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-action-microphone@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/icon-action-microphone.webp",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-action-refresh.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-action-refresh@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-action-refresh@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/icon-action-refresh.webp",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-action-delete.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-action-delete@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-action-delete@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/icon-action-delete.webp",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-brain.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-brain@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-brain@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/icon-feature-brain.webp",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-terminal.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-terminal@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-feature-terminal@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/icon-feature-terminal.webp",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-status-success.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-status-success@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-status-success@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/icon-status-success.webp",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-status-warning.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-status-warning@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/icon-status-warning@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/icon-status-warning.webp",
+    "/workspace/hydra-shell/vega-compiler/output/png/hero-ai-assistant.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/hero-ai-assistant@2x.png",
+    "/workspace/hydra-shell/vega-compiler/output/png/hero-ai-assistant@3x.png",
+    "/workspace/hydra-shell/vega-compiler/output/webp/hero-ai-assistant.webp"
+  ],
+  "brand_guide": "/workspace/hydra-shell/vega-compiler/output/IGED_Brand_Guide.pdf"
+}
