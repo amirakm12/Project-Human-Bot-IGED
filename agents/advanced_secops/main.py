@@ -4,14 +4,14 @@ IGED Advanced Security Operations Agent
 Advanced penetration testing, exploit development, and security operations
 """
 
+import json
 import os
-import sys
 import subprocess
+import sys
 import threading
 import time
-import json
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent
@@ -19,36 +19,40 @@ sys.path.insert(0, str(project_root))
 
 try:
     import requests
+
     REQUESTS_AVAILABLE = True
 except ImportError:
     REQUESTS_AVAILABLE = False
 
 try:
     import psutil
+
     PSUTIL_AVAILABLE = True
 except ImportError:
     PSUTIL_AVAILABLE = False
 
 try:
     import nmap
+
     NMAP_AVAILABLE = True
 except ImportError:
     NMAP_AVAILABLE = False
 
+
 class AdvancedSecOpsAgent:
     """Advanced Security Operations Agent for penetration testing and exploit development"""
-    
+
     def __init__(self, memory_engine=None):
         self.memory_engine = memory_engine
         self.output_dir = Path("output/security/advanced")
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        
+
         self.exploits_dir = Path("output/exploits")
         self.exploits_dir.mkdir(parents=True, exist_ok=True)
-        
+
         self.payloads_dir = Path("output/payloads")
         self.payloads_dir.mkdir(parents=True, exist_ok=True)
-        
+
         self.name = "Advanced SecOps Agent"
         self.description = "Advanced penetration testing and exploit development"
         self.capabilities = [
@@ -60,21 +64,23 @@ class AdvancedSecOpsAgent:
             "lateral_movement",
             "persistence_techniques",
             "anti_forensics",
-            "custom_tool_development"
+            "custom_tool_development",
         ]
-    
-    def run(self, command: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+
+    def run(
+        self, command: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Execute advanced security operations commands"""
         try:
             if not REQUESTS_AVAILABLE:
                 return {
                     "status": "error",
                     "message": "Advanced SecOps requires 'requests' library. Install: pip install requests",
-                    "agent": self.name
+                    "agent": self.name,
                 }
-            
+
             command_lower = command.lower()
-            
+
             if "exploit" in command_lower and "develop" in command_lower:
                 return self.develop_exploit(command, context)
             elif "payload" in command_lower:
@@ -95,117 +101,131 @@ class AdvancedSecOpsAgent:
                 return self.develop_custom_tool(command, context)
             else:
                 return self.general_security_operation(command, context)
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"Advanced SecOps operation failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
-    def develop_exploit(self, command: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+
+    def develop_exploit(
+        self, command: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Develop custom exploits for identified vulnerabilities"""
         try:
             # Extract target information from command
             target_info = self._extract_target_info(command)
-            
+
             exploit_template = self._generate_exploit_template(target_info)
-            
+
             # Save exploit to file
             exploit_file = self.exploits_dir / f"exploit_{int(time.time())}.py"
-            with open(exploit_file, 'w') as f:
+            with open(exploit_file, "w") as f:
                 f.write(exploit_template)
-            
+
             return {
                 "status": "success",
                 "message": f"Exploit developed and saved to {exploit_file}",
                 "exploit_file": str(exploit_file),
                 "target_info": target_info,
-                "agent": self.name
+                "agent": self.name,
             }
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"Exploit development failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
-    def generate_payload(self, command: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+
+    def generate_payload(
+        self, command: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Generate custom payloads for various attack scenarios"""
         try:
             payload_type = self._determine_payload_type(command)
             payload_content = self._generate_payload_content(payload_type, command)
-            
+
             # Save payload to file
-            payload_file = self.payloads_dir / f"payload_{payload_type}_{int(time.time())}.py"
-            with open(payload_file, 'w') as f:
+            payload_file = (
+                self.payloads_dir / f"payload_{payload_type}_{int(time.time())}.py"
+            )
+            with open(payload_file, "w") as f:
                 f.write(payload_content)
-            
+
             return {
                 "status": "success",
                 "message": f"Payload generated: {payload_type}",
                 "payload_file": str(payload_file),
                 "payload_type": payload_type,
-                "agent": self.name
+                "agent": self.name,
             }
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"Payload generation failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
-    def advanced_vulnerability_scan(self, command: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+
+    def advanced_vulnerability_scan(
+        self, command: str, context: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Perform advanced vulnerability scanning with exploit suggestions"""
         try:
             target = self._extract_target_from_command(command)
-            
+
             if not NMAP_AVAILABLE:
                 return {
                     "status": "warning",
                     "message": "Advanced scanning requires python-nmap. Install: pip install python-nmap",
                     "basic_scan": "Use basic network tools for manual scanning",
-                    "agent": self.name
+                    "agent": self.name,
                 }
-            
+
             # Perform comprehensive scan
             scan_results = self._perform_comprehensive_scan(target)
-            
+
             # Analyze vulnerabilities and suggest exploits
             exploit_suggestions = self._analyze_vulnerabilities(scan_results)
-            
+
             # Save results
             results_file = self.output_dir / f"vuln_scan_{int(time.time())}.json"
-            with open(results_file, 'w') as f:
-                json.dump({
-                    "target": target,
-                    "scan_results": scan_results,
-                    "exploit_suggestions": exploit_suggestions
-                }, f, indent=2)
-            
+            with open(results_file, "w") as f:
+                json.dump(
+                    {
+                        "target": target,
+                        "scan_results": scan_results,
+                        "exploit_suggestions": exploit_suggestions,
+                    },
+                    f,
+                    indent=2,
+                )
+
             return {
                 "status": "success",
                 "message": f"Advanced vulnerability scan completed for {target}",
                 "results_file": str(results_file),
                 "vulnerabilities_found": len(exploit_suggestions),
                 "exploit_suggestions": exploit_suggestions[:5],  # Top 5
-                "agent": self.name
+                "agent": self.name,
             }
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"Advanced vulnerability scan failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
-    def advanced_reconnaissance(self, command: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+
+    def advanced_reconnaissance(
+        self, command: str, context: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Perform advanced reconnaissance and intelligence gathering"""
         try:
             target = self._extract_target_from_command(command)
-            
+
             recon_data = {
                 "target": target,
                 "timestamp": time.time(),
@@ -214,202 +234,229 @@ class AdvancedSecOpsAgent:
                 "web_technologies": self._identify_web_technologies(target),
                 "dns_analysis": self._analyze_dns(target),
                 "whois_info": self._gather_whois_info(target),
-                "social_engineering_vectors": self._identify_social_vectors(target)
+                "social_engineering_vectors": self._identify_social_vectors(target),
             }
-            
+
             # Save reconnaissance data
-            recon_file = self.output_dir / f"recon_{target.replace('.', '_')}_{int(time.time())}.json"
-            with open(recon_file, 'w') as f:
+            recon_file = (
+                self.output_dir
+                / f"recon_{target.replace('.', '_')}_{int(time.time())}.json"
+            )
+            with open(recon_file, "w") as f:
                 json.dump(recon_data, f, indent=2)
-            
+
             return {
                 "status": "success",
                 "message": f"Advanced reconnaissance completed for {target}",
                 "recon_file": str(recon_file),
                 "attack_vectors": len(recon_data.get("social_engineering_vectors", [])),
                 "services_found": len(recon_data.get("service_enumeration", [])),
-                "agent": self.name
+                "agent": self.name,
             }
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"Advanced reconnaissance failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
-    def privilege_escalation(self, command: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+
+    def privilege_escalation(
+        self, command: str, context: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Generate privilege escalation techniques and exploits"""
         try:
             system_type = self._determine_system_type(command)
-            
+
             escalation_techniques = self._generate_escalation_techniques(system_type)
-            
+
             # Create privilege escalation script
-            script_content = self._create_escalation_script(escalation_techniques, system_type)
-            
-            script_file = self.output_dir / f"privesc_{system_type}_{int(time.time())}.py"
-            with open(script_file, 'w') as f:
+            script_content = self._create_escalation_script(
+                escalation_techniques, system_type
+            )
+
+            script_file = (
+                self.output_dir / f"privesc_{system_type}_{int(time.time())}.py"
+            )
+            with open(script_file, "w") as f:
                 f.write(script_content)
-            
+
             return {
                 "status": "success",
                 "message": f"Privilege escalation techniques generated for {system_type}",
                 "script_file": str(script_file),
                 "techniques": escalation_techniques,
                 "system_type": system_type,
-                "agent": self.name
+                "agent": self.name,
             }
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"Privilege escalation generation failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
-    def lateral_movement(self, command: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+
+    def lateral_movement(
+        self, command: str, context: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Generate lateral movement techniques and tools"""
         try:
             network_info = self._extract_network_info(command)
-            
+
             movement_techniques = self._generate_movement_techniques(network_info)
-            
+
             # Create lateral movement toolkit
             toolkit_content = self._create_movement_toolkit(movement_techniques)
-            
+
             toolkit_file = self.output_dir / f"lateral_movement_{int(time.time())}.py"
-            with open(toolkit_file, 'w') as f:
+            with open(toolkit_file, "w") as f:
                 f.write(toolkit_content)
-            
+
             return {
                 "status": "success",
                 "message": "Lateral movement toolkit generated",
                 "toolkit_file": str(toolkit_file),
                 "techniques": movement_techniques,
-                "agent": self.name
+                "agent": self.name,
             }
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"Lateral movement generation failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
-    def establish_persistence(self, command: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+
+    def establish_persistence(
+        self, command: str, context: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Generate persistence mechanisms for various systems"""
         try:
             system_type = self._determine_system_type(command)
-            
+
             persistence_methods = self._generate_persistence_methods(system_type)
-            
+
             # Create persistence toolkit
-            persistence_content = self._create_persistence_toolkit(persistence_methods, system_type)
-            
-            persistence_file = self.output_dir / f"persistence_{system_type}_{int(time.time())}.py"
-            with open(persistence_file, 'w') as f:
+            persistence_content = self._create_persistence_toolkit(
+                persistence_methods, system_type
+            )
+
+            persistence_file = (
+                self.output_dir / f"persistence_{system_type}_{int(time.time())}.py"
+            )
+            with open(persistence_file, "w") as f:
                 f.write(persistence_content)
-            
+
             return {
                 "status": "success",
                 "message": f"Persistence mechanisms generated for {system_type}",
                 "persistence_file": str(persistence_file),
                 "methods": persistence_methods,
-                "agent": self.name
+                "agent": self.name,
             }
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"Persistence generation failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
-    def anti_forensics(self, command: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+
+    def anti_forensics(
+        self, command: str, context: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Generate anti-forensics and evasion techniques"""
         try:
             evasion_techniques = self._generate_evasion_techniques()
-            
+
             # Create anti-forensics toolkit
-            anti_forensics_content = self._create_anti_forensics_toolkit(evasion_techniques)
-            
-            anti_forensics_file = self.output_dir / f"anti_forensics_{int(time.time())}.py"
-            with open(anti_forensics_file, 'w') as f:
+            anti_forensics_content = self._create_anti_forensics_toolkit(
+                evasion_techniques
+            )
+
+            anti_forensics_file = (
+                self.output_dir / f"anti_forensics_{int(time.time())}.py"
+            )
+            with open(anti_forensics_file, "w") as f:
                 f.write(anti_forensics_content)
-            
+
             return {
                 "status": "success",
                 "message": "Anti-forensics toolkit generated",
                 "toolkit_file": str(anti_forensics_file),
                 "techniques": evasion_techniques,
-                "agent": self.name
+                "agent": self.name,
             }
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"Anti-forensics generation failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
-    def develop_custom_tool(self, command: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+
+    def develop_custom_tool(
+        self, command: str, context: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Develop custom security tools based on requirements"""
         try:
             tool_requirements = self._extract_tool_requirements(command)
-            
+
             tool_code = self._generate_custom_tool(tool_requirements)
-            
+
             tool_file = self.output_dir / f"custom_tool_{int(time.time())}.py"
-            with open(tool_file, 'w') as f:
+            with open(tool_file, "w") as f:
                 f.write(tool_code)
-            
+
             return {
                 "status": "success",
                 "message": "Custom security tool developed",
                 "tool_file": str(tool_file),
                 "requirements": tool_requirements,
-                "agent": self.name
+                "agent": self.name,
             }
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"Custom tool development failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
-    def general_security_operation(self, command: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+
+    def general_security_operation(
+        self, command: str, context: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Handle general security operations"""
         try:
             operation_type = self._determine_operation_type(command)
-            
+
             if operation_type == "unknown":
                 return {
                     "status": "info",
                     "message": "Advanced SecOps Agent capabilities:",
                     "capabilities": self.capabilities,
                     "usage": "Specify: exploit development, payload generation, vulnerability scanning, reconnaissance, privilege escalation, lateral movement, persistence, anti-forensics, or custom tool development",
-                    "agent": self.name
+                    "agent": self.name,
                 }
-            
+
             # Execute general operation
             result = self._execute_general_operation(operation_type, command)
-            
+
             return {
                 "status": "success",
                 "message": f"Security operation completed: {operation_type}",
                 "result": result,
-                "agent": self.name
+                "agent": self.name,
             }
-        
+
         except Exception as e:
             return {
                 "status": "error",
                 "message": f"General security operation failed: {str(e)}",
-                "agent": self.name
+                "agent": self.name,
             }
-    
+
     # Helper methods
     def _extract_target_info(self, command: str) -> Dict[str, Any]:
         """Extract target information from command"""
@@ -417,9 +464,9 @@ class AdvancedSecOpsAgent:
         return {
             "type": "web_application",
             "vulnerability": "buffer_overflow",
-            "platform": "linux"
+            "platform": "linux",
         }
-    
+
     def _generate_exploit_template(self, target_info: Dict[str, Any]) -> str:
         """Generate exploit template based on target information"""
         template = f'''#!/usr/bin/env python3
@@ -476,11 +523,11 @@ if __name__ == "__main__":
     exploit.execute()
 '''
         return template
-    
+
     def _determine_payload_type(self, command: str) -> str:
         """Determine payload type from command"""
         command_lower = command.lower()
-        
+
         if "reverse" in command_lower and "shell" in command_lower:
             return "reverse_shell"
         elif "bind" in command_lower and "shell" in command_lower:
@@ -491,7 +538,7 @@ if __name__ == "__main__":
             return "download_execute"
         else:
             return "generic"
-    
+
     def _generate_payload_content(self, payload_type: str, command: str) -> str:
         """Generate payload content based on type"""
         if payload_type == "reverse_shell":
@@ -528,7 +575,7 @@ if __name__ == "__main__":
     PORT = 4444         # Change to desired port
     reverse_shell(HOST, PORT)
 '''
-        
+
         elif payload_type == "bind_shell":
             return '''#!/usr/bin/env python3
 """
@@ -567,7 +614,7 @@ if __name__ == "__main__":
     PORT = 4444  # Change to desired port
     bind_shell(PORT)
 '''
-        
+
         else:
             return '''#!/usr/bin/env python3
 """
@@ -593,7 +640,7 @@ if __name__ == "__main__":
     payload = GenericPayload()
     payload.execute()
 '''
-    
+
     def _extract_target_from_command(self, command: str) -> str:
         """Extract target IP/hostname from command"""
         # This would be enhanced with actual parsing logic
@@ -602,58 +649,66 @@ if __name__ == "__main__":
             if "." in word and any(c.isdigit() for c in word):
                 return word
         return "127.0.0.1"  # Default
-    
+
     def _perform_comprehensive_scan(self, target: str) -> Dict[str, Any]:
         """Perform comprehensive vulnerability scan"""
         # Placeholder for actual scanning logic
         return {
             "open_ports": [22, 80, 443, 3389],
             "services": ["ssh", "http", "https", "rdp"],
-            "vulnerabilities": ["CVE-2021-34527", "CVE-2021-1675"]
+            "vulnerabilities": ["CVE-2021-34527", "CVE-2021-1675"],
         }
-    
-    def _analyze_vulnerabilities(self, scan_results: Dict[str, Any]) -> List[Dict[str, Any]]:
+
+    def _analyze_vulnerabilities(
+        self, scan_results: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Analyze vulnerabilities and suggest exploits"""
         suggestions = []
-        
+
         for vuln in scan_results.get("vulnerabilities", []):
-            suggestions.append({
-                "cve": vuln,
-                "severity": "high",
-                "exploit_available": True,
-                "metasploit_module": f"exploit/windows/smb/{vuln.lower().replace('-', '_')}",
-                "manual_exploit": f"Custom exploit for {vuln}"
-            })
-        
+            suggestions.append(
+                {
+                    "cve": vuln,
+                    "severity": "high",
+                    "exploit_available": True,
+                    "metasploit_module": f"exploit/windows/smb/{vuln.lower().replace('-', '_')}",
+                    "manual_exploit": f"Custom exploit for {vuln}",
+                }
+            )
+
         return suggestions
-    
+
     def _gather_network_info(self, target: str) -> Dict[str, Any]:
         """Gather network information about target"""
         return {"network_range": "192.168.1.0/24", "gateway": "192.168.1.1"}
-    
+
     def _enumerate_services(self, target: str) -> List[Dict[str, Any]]:
         """Enumerate services on target"""
         return [
             {"port": 22, "service": "ssh", "version": "OpenSSH 7.4"},
-            {"port": 80, "service": "http", "version": "Apache 2.4.6"}
+            {"port": 80, "service": "http", "version": "Apache 2.4.6"},
         ]
-    
+
     def _identify_web_technologies(self, target: str) -> Dict[str, Any]:
         """Identify web technologies in use"""
         return {"server": "Apache", "framework": "PHP", "cms": "WordPress"}
-    
+
     def _analyze_dns(self, target: str) -> Dict[str, Any]:
         """Analyze DNS information"""
         return {"mx_records": [], "txt_records": [], "subdomain_enum": []}
-    
+
     def _gather_whois_info(self, target: str) -> Dict[str, Any]:
         """Gather WHOIS information"""
-        return {"registrar": "Unknown", "creation_date": "Unknown", "admin_email": "Unknown"}
-    
+        return {
+            "registrar": "Unknown",
+            "creation_date": "Unknown",
+            "admin_email": "Unknown",
+        }
+
     def _identify_social_vectors(self, target: str) -> List[str]:
         """Identify social engineering vectors"""
         return ["email_phishing", "phone_vishing", "physical_access"]
-    
+
     def _determine_system_type(self, command: str) -> str:
         """Determine target system type"""
         command_lower = command.lower()
@@ -665,17 +720,17 @@ if __name__ == "__main__":
             return "macos"
         else:
             return "generic"
-    
+
     def _generate_escalation_techniques(self, system_type: str) -> List[str]:
         """Generate privilege escalation techniques"""
         techniques = {
             "windows": ["UAC bypass", "Token impersonation", "Service exploitation"],
             "linux": ["SUID exploitation", "Kernel exploits", "Cron job abuse"],
             "macos": ["Authorization plugin abuse", "Launch daemon exploitation"],
-            "generic": ["Weak permissions", "Unquoted service paths", "DLL hijacking"]
+            "generic": ["Weak permissions", "Unquoted service paths", "DLL hijacking"],
         }
         return techniques.get(system_type, techniques["generic"])
-    
+
     def _create_escalation_script(self, techniques: List[str], system_type: str) -> str:
         """Create privilege escalation script"""
         return f'''#!/usr/bin/env python3
@@ -708,15 +763,15 @@ if __name__ == "__main__":
     escalator = PrivilegeEscalation()
     escalator.escalate()
 '''
-    
+
     def _extract_network_info(self, command: str) -> Dict[str, Any]:
         """Extract network information from command"""
         return {"network": "192.168.1.0/24", "domain": "example.com"}
-    
+
     def _generate_movement_techniques(self, network_info: Dict[str, Any]) -> List[str]:
         """Generate lateral movement techniques"""
         return ["SMB enumeration", "RDP brute force", "Pass-the-hash", "WMI execution"]
-    
+
     def _create_movement_toolkit(self, techniques: List[str]) -> str:
         """Create lateral movement toolkit"""
         return f'''#!/usr/bin/env python3
@@ -744,16 +799,16 @@ if __name__ == "__main__":
     movement = LateralMovement()
     movement.move_laterally()
 '''
-    
+
     def _generate_persistence_methods(self, system_type: str) -> List[str]:
         """Generate persistence methods"""
         methods = {
             "windows": ["Registry run keys", "Scheduled tasks", "Service installation"],
             "linux": ["Cron jobs", "Systemd services", "Profile scripts"],
-            "macos": ["Launch agents", "Login items", "Kernel extensions"]
+            "macos": ["Launch agents", "Login items", "Kernel extensions"],
         }
         return methods.get(system_type, ["Startup scripts", "User profiles"])
-    
+
     def _create_persistence_toolkit(self, methods: List[str], system_type: str) -> str:
         """Create persistence toolkit"""
         return f'''#!/usr/bin/env python3
@@ -778,7 +833,7 @@ if __name__ == "__main__":
     persistence = Persistence()
     persistence.establish_persistence()
 '''
-    
+
     def _generate_evasion_techniques(self) -> List[str]:
         """Generate anti-forensics and evasion techniques"""
         return [
@@ -788,9 +843,9 @@ if __name__ == "__main__":
             "Network traffic obfuscation",
             "Memory dumping prevention",
             "Disk wiping",
-            "Anti-VM detection"
+            "Anti-VM detection",
         ]
-    
+
     def _create_anti_forensics_toolkit(self, techniques: List[str]) -> str:
         """Create anti-forensics toolkit"""
         return f'''#!/usr/bin/env python3
@@ -814,20 +869,20 @@ if __name__ == "__main__":
     anti_forensics = AntiForensics()
     anti_forensics.clear_tracks()
 '''
-    
+
     def _extract_tool_requirements(self, command: str) -> Dict[str, Any]:
         """Extract custom tool requirements from command"""
         return {
             "type": "network_scanner",
             "features": ["port_scanning", "service_detection"],
-            "platform": "cross_platform"
+            "platform": "cross_platform",
         }
-    
+
     def _generate_custom_tool(self, requirements: Dict[str, Any]) -> str:
         """Generate custom security tool"""
         tool_type = requirements.get("type", "generic_tool")
         features = requirements.get("features", [])
-        
+
         return f'''#!/usr/bin/env python3
 """
 Custom Security Tool: {tool_type}
@@ -860,11 +915,11 @@ if __name__ == "__main__":
     tool = CustomSecurityTool()
     tool.run()
 '''
-    
+
     def _determine_operation_type(self, command: str) -> str:
         """Determine the type of security operation"""
         command_lower = command.lower()
-        
+
         if "scan" in command_lower:
             return "scanning"
         elif "enum" in command_lower:
@@ -875,11 +930,13 @@ if __name__ == "__main__":
             return "network_sniffing"
         else:
             return "unknown"
-    
-    def _execute_general_operation(self, operation_type: str, command: str) -> Dict[str, Any]:
+
+    def _execute_general_operation(
+        self, operation_type: str, command: str
+    ) -> Dict[str, Any]:
         """Execute general security operation"""
         return {
             "operation": operation_type,
             "command": command,
-            "result": f"Executed {operation_type} operation successfully"
-        } 
+            "result": f"Executed {operation_type} operation successfully",
+        }

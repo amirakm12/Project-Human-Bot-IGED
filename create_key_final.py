@@ -3,17 +3,18 @@
 IGED - Final Encryption Key Generator (Enterprise-Hardened)
 """
 
-import os
-import sys
-import base64
-import stat
 import argparse
+import base64
+import os
+import stat
 import subprocess
+import sys
+from datetime import datetime
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from datetime import datetime
 
 LOG_PATH = Path("logs/encryption.log")
+
 
 def log(msg):
     print(msg)
@@ -24,6 +25,7 @@ def log(msg):
     except Exception:
         pass
 
+
 def create_encryption_key(force=False):
     """Create encryption key with security and fallback mechanisms"""
 
@@ -31,6 +33,7 @@ def create_encryption_key(force=False):
 
     try:
         from cryptography.fernet import Fernet
+
         log("✅ Cryptography module loaded")
     except ImportError as e:
         log(f"❌ Cryptography not installed: {e}")
@@ -38,7 +41,7 @@ def create_encryption_key(force=False):
         return False
 
     key = Fernet.generate_key()
-    key_b64 = base64.b64encode(key).decode('utf-8')
+    key_b64 = base64.b64encode(key).decode("utf-8")
 
     current_dir = Path.cwd()
     config_dir = current_dir / "config"
@@ -71,10 +74,9 @@ def create_encryption_key(force=False):
     except Exception as e:
         log(f"⚠️ Atomic write failed: {e}")
         try:
-            subprocess.run([
-                'cmd', '/c',
-                f'echo {key_b64} > "{key_file}"'
-            ], check=True, shell=True)
+            subprocess.run(
+                ["cmd", "/c", f'echo {key_b64} > "{key_file}"'], check=True, shell=True
+            )
             log("✅ Key written via subprocess fallback")
         except Exception as e2:
             log(f"❌ Subprocess fallback failed: {e2}")
@@ -96,9 +98,14 @@ def create_encryption_key(force=False):
         log("❌ Final check failed: key file does not exist.")
         return False
 
+
 def main():
     parser = argparse.ArgumentParser(description="IGED Encryption Key Generator")
-    parser.add_argument('--force', action='store_true', help="Force key regeneration if it already exists")
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Force key regeneration if it already exists",
+    )
     args = parser.parse_args()
 
     print("🚀 IGED Hardened Encryption Key Generator")
@@ -118,5 +125,6 @@ def main():
         print("💡 Retry or manually place key at: config/secret.key")
         sys.exit(1)
 
+
 if __name__ == "__main__":
-    main() 
+    main()

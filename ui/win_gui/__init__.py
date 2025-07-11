@@ -1,2 +1,2 @@
 # Windows GUI module for IGED
-# Contains Windows-specific GUI components 
+# Contains Windows-specific GUI components

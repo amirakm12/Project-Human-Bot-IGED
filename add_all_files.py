@@ -9,6 +9,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 def run_command(command, description):
     """Run a git command and return success status"""
     print(f"🔄 {description}...")
@@ -24,66 +25,70 @@ def run_command(command, description):
         print(f"❌ {description} error: {e}")
         return False, str(e)
 
+
 def get_file_count():
     """Count total files in the project"""
     count = 0
-    for root, dirs, files in os.walk('.'):
+    for root, dirs, files in os.walk("."):
         # Skip .git directory
-        if '.git' in root:
+        if ".git" in root:
             continue
         count += len(files)
     return count
+
 
 def main():
     print("🚀 IGED - Add ALL Files to GitHub Repository")
     print("=" * 60)
     print()
-    
+
     # Check if we're in the right directory
-    if not os.path.exists('launcher.py'):
-        print("❌ Error: launcher.py not found. Please run this script from the IGED project root directory.")
+    if not os.path.exists("launcher.py"):
+        print(
+            "❌ Error: launcher.py not found. Please run this script from the IGED project root directory."
+        )
         sys.exit(1)
-    
+
     # Count files
     print("📊 Counting files...")
     file_count = get_file_count()
     print(f"📁 Found {file_count} files to add")
     print()
-    
+
     # Initialize git if needed
-    if not os.path.exists('.git'):
-        success, _ = run_command('git init', 'Initializing git repository')
+    if not os.path.exists(".git"):
+        success, _ = run_command("git init", "Initializing git repository")
         if not success:
             sys.exit(1)
         print()
-    
+
     # Add remote if needed
-    success, output = run_command('git remote -v', 'Checking remote repository')
-    if not success or 'origin' not in output:
+    success, output = run_command("git remote -v", "Checking remote repository")
+    if not success or "origin" not in output:
         success, _ = run_command(
-            'git remote add origin https://github.com/amirakm12/Project-Human-Bot-IGED.git',
-            'Adding remote repository'
+            "git remote add origin https://github.com/amirakm12/Project-Human-Bot-IGED.git",
+            "Adding remote repository",
         )
         if not success:
             sys.exit(1)
         print()
-    
+
     # Add all files
     print("📦 Adding all files and folders...")
-    success, output = run_command('git add .', 'Adding all files to git')
+    success, output = run_command("git add .", "Adding all files to git")
     if not success:
         sys.exit(1)
     print()
-    
+
     # Check if there are changes to commit
-    success, output = run_command('git status --porcelain', 'Checking for changes')
+    success, output = run_command("git status --porcelain", "Checking for changes")
     if not success:
         sys.exit(1)
-    
+
     if not output.strip():
         print("ℹ️ No changes to commit. All files are already up to date.")
         return
-    
+
     # Commit changes
     commit_message = """Add complete IGED project with all files and folders
 
@@ -98,23 +103,29 @@ def main():
 - Complete project structure with all dependencies
 
 Total files: {file_count}"""
-    
-    success, _ = run_command(f'git commit -m "{commit_message}"', 'Committing all changes')
+
+    success, _ = run_command(
+        f'git commit -m "{commit_message}"', "Committing all changes"
+    )
     if not success:
         sys.exit(1)
     print()
-    
+
     # Push to GitHub
     print("🚀 Pushing to GitHub...")
-    success, _ = run_command('git push -u origin main', 'Pushing to main branch')
-    
+    success, _ = run_command("git push -u origin main", "Pushing to main branch")
+
     if not success:
         print("🔄 Trying master branch...")
-        success, _ = run_command('git push -u origin master', 'Pushing to master branch')
+        success, _ = run_command(
+            "git push -u origin master", "Pushing to master branch"
+        )
         if not success:
-            print("❌ Failed to push to GitHub. Please check your credentials and try again.")
+            print(
+                "❌ Failed to push to GitHub. Please check your credentials and try again."
+            )
             sys.exit(1)
-    
+
     print()
     print("🎉 SUCCESS! All files have been added to GitHub!")
     print("=" * 60)
@@ -136,5 +147,6 @@ Total files: {file_count}"""
     print()
     print("🚀 Your IGED project is now fully uploaded to GitHub!")
 
+
 if __name__ == "__main__":
-    main() 
+    main()

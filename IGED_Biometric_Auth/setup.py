@@ -4,8 +4,9 @@ IGED Biometric Authentication Setup
 Setup script for IGED Biometric Authentication Integration Suite
 """
 
-from setuptools import setup, find_packages
 from pathlib import Path
+
+from setuptools import find_packages, setup
 
 # Read README file
 readme_path = Path("README.md")
@@ -20,8 +21,8 @@ install_requires = []
 if requirements_path.exists():
     with open(requirements_path, "r", encoding="utf-8") as f:
         install_requires = [
-            line.strip() 
-            for line in f.readlines() 
+            line.strip()
+            for line in f.readlines()
             if line.strip() and not line.startswith("#")
         ]
 
@@ -99,4 +100,4 @@ setup(
         "Source": "https://github.com/iged/biometric-auth",
         "Documentation": "https://iged-biometric-auth.readthedocs.io/",
     },
-) 
+)

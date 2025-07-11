@@ -1,2 +1,2 @@
 # UI module for IGED
-# Contains user interface components 
+# Contains user interface components

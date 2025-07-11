@@ -5,4 +5,4 @@ Remote device control and system management
 
 from .main import RemoteControlAgent
 
-__all__ = ['RemoteControlAgent']
+__all__ = ["RemoteControlAgent"]
