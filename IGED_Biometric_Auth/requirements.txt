@@ -1,0 +1,58 @@
+# Core Dependencies
+cryptography==41.0.3
+pywinrt==1.0.0
+flask==2.3.2
+flask-cors==3.0.10
+pyinstaller==5.14.1
+requests==2.31.0
+python-fido2==1.20.0
+PySide6==6.6.1
+websockets==11.0.3
+
+# Additional Security & Utilities
+bcrypt==4.0.1
+argon2-cffi==21.3.0
+pycryptodome==3.19.0
+keyring==24.3.0
+
+# WebAuthn & Biometric Support
+fido2==1.20.0
+webauthn==1.0.0
+
+# GUI & UI Components
+PySide6-QtCore==6.6.1
+PySide6-QtGui==6.6.1
+PySide6-QtWidgets==6.6.1
+
+# Network & Communication
+aiohttp==3.9.1
+asyncio-mqtt==0.16.1
+websocket-client==1.7.0
+
+# Development & Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1
+
+# Logging & Monitoring
+structlog==23.2.0
+colorama==0.4.6
+rich==13.7.0
+
+# Platform Specific
+# Windows
+pywin32==306; sys_platform == "win32"
+# Linux
+# pynacl==1.5.0; sys_platform == "linux"
+# macOS
+# pyobjc-framework-Security==9.2; sys_platform == "darwin"
+
+# Optional: Advanced Features
+# For hardware security modules
+# pyscard==2.0.3
+# For advanced biometric features
+# opencv-python==4.8.1.78
+# For machine learning biometrics
+# tensorflow==2.15.0 
