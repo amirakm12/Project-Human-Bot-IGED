@@ -290,15 +290,15 @@ class SystemInfoPlugin:
         try:
             linux_info = {}
             
-                                      # Get distribution info
-             try:
-                 import distro
-                 linux_info.update({
-                     'distribution': distro.name(),
-                     'distribution_version': distro.version(),
-                     'distribution_codename': distro.codename()
-                 })
-             except ImportError:
+            # Get distribution info
+            try:
+                import distro
+                linux_info.update({
+                    'distribution': distro.name(),
+                    'distribution_version': distro.version(),
+                    'distribution_codename': distro.codename()
+                })
+            except ImportError:
                  # Fallback for systems without distro package
                  try:
                      with open('/etc/os-release', 'r') as f:

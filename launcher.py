@@ -23,7 +23,7 @@ from core.voice_pipeline import VoicePipeline
 from core.command_parser import CommandParser
 from core.memory_engine import MemoryEngine
 from core.encryption import EncryptionManager
-from agents.orchestrator import Orchestrator
+from agents.orchestrator import AgentOrchestrator
 from admin_panel.web_admin import WebAdminPanel
 from watchdog import Watchdog
 import logging
@@ -99,7 +99,7 @@ class IGEDLauncher:
             self.components['parser'] = CommandParser()
             
             # Initialize orchestrator with memory
-            self.components['orchestrator'] = Orchestrator(self.components['memory'])
+            self.components['orchestrator'] = AgentOrchestrator(self.components['memory'])
             
             # Initialize voice pipeline with all dependencies
             self.components['voice'] = VoicePipeline(
