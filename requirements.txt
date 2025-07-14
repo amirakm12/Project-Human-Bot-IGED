@@ -45,6 +45,7 @@ packaging==25.0
 pandas==2.3.1
 pillow==11.3.0
 psutil==7.0.0
+PyAudio==0.2.14
 pycparser==2.22
 pyinstaller==6.14.2
 pyinstaller-hooks-contrib==2025.5
