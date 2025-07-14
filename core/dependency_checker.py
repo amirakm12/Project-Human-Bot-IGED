@@ -1,258 +1,587 @@
-#!/usr/bin/env python3
 """
-IGED Dependency Checker
-Checks for required and optional dependencies and provides installation guidance
+Dependency Checker for IGED
+Validates and manages system dependencies
+
+This module provides comprehensive dependency checking and management
+for the IGED system, ensuring all required packages are available.
 """
 
-import sys
-import subprocess
 import importlib
+import logging
+import subprocess
+import sys
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Any
+
+logger = logging.getLogger(__name__)
+
 
 class DependencyChecker:
-    """Manages dependency checking and installation guidance"""
+    """
+    Comprehensive dependency checker and manager for IGED.
+    
+    This class handles validation, installation, and management of
+    all required dependencies for the IGED system.
+    """
     
     def __init__(self):
-        self.required_deps = {
-            'cryptography': 'Core encryption functionality',
-            'flask': 'Web admin interface',
-            'flask_cors': 'Cross-origin resource sharing',
-            'pathlib': 'File path utilities',
-            'logging': 'System logging',
-            'threading': 'Multi-threading support',
-            'json': 'JSON data handling'
+        """Initialize the dependency checker with default settings."""
+        self.required_packages = {
+            'core': [
+                'cryptography',
+                'pathlib',
+                'json',
+                'logging',
+                'threading',
+                'queue'
+            ],
+            'web': [
+                'flask',
+                'flask_cors'
+            ],
+            'voice': [
+                'speech_recognition',
+                'whisper'
+            ],
+            'data': [
+                'pandas',
+                'numpy',
+                'matplotlib'
+            ],
+            'security': [
+                'nmap',
+                'requests',
+                'psutil'
+            ],
+            'optional': [
+                'tkinter',
+                'pynput',
+                'pyautogui',
+                'PIL'
+            ]
         }
         
-        self.optional_deps = {
-            'speech_recognition': 'Voice command processing',
-            'whisper': 'Offline speech recognition',
-            'pyaudio': 'Audio input/output',
-            'pandas': 'Data manipulation and analysis',
-            'numpy': 'Numerical computing',
-            'matplotlib': 'Data visualization',
-            'seaborn': 'Statistical visualization',
-            'requests': 'HTTP requests',
-            'psutil': 'System monitoring',
-            'python_nmap': 'Network scanning',
-            'pyinstaller': 'Executable creation'
-        }
-        
-        self.python_version_required = (3, 8)
+        self.dependency_status: Dict[str, Any] = {}
+        self.missing_dependencies: List[str] = []
+        self.failed_imports: List[str] = []
     
-    def check_python_version(self) -> Tuple[bool, str]:
-        """Check if Python version meets requirements"""
-        current_version = sys.version_info[:2]
-        required_version = self.python_version_required
+    def check_all_dependencies(self) -> Dict[str, Any]:
+        """
+        Check all system dependencies.
         
-        if current_version >= required_version:
-            return True, f"✅ Python {'.'.join(map(str, current_version))} (OK)"
-        else:
-            return False, f"❌ Python {'.'.join(map(str, current_version))} (Required: {'.'.join(map(str, required_version))}+)"
-    
-    def check_dependency(self, package_name: str) -> Tuple[bool, str, Optional[str]]:
-        """Check if a specific dependency is available"""
-        try:
-            if package_name == 'flask_cors':
-                import flask_cors
-            elif package_name == 'python_nmap':
-                import nmap
-            elif package_name == 'speech_recognition':
-                import speech_recognition
-            else:
-                importlib.import_module(package_name)
+        Returns:
+            Dictionary containing complete dependency status report
+        """
+        logger.info("🔧 Checking all system dependencies...")
+        
+        self.dependency_status.clear()
+        self.missing_dependencies.clear()
+        self.failed_imports.clear()
+        
+        total_packages = 0
+        available_packages = 0
+        
+        for category, packages in self.required_packages.items():
+            category_status = {}
+            category_available = 0
             
-            # Get version if possible
-            try:
-                if package_name == 'flask_cors':
-                    version = flask_cors.__version__
-                elif package_name == 'python_nmap':
-                    import nmap
-                    version = getattr(nmap, '__version__', 'unknown')
-                else:
-                    module = importlib.import_module(package_name)
-                    version = getattr(module, '__version__', 'unknown')
-                return True, f"✅ {package_name}", version
-            except:
-                return True, f"✅ {package_name}", None
+            for package in packages:
+                total_packages += 1
+                status = self._check_package(package)
+                category_status[package] = status
                 
-        except ImportError:
-            return False, f"❌ {package_name}", None
-    
-    def check_all_dependencies(self) -> Dict[str, Dict]:
-        """Check all dependencies and return status"""
-        results = {
-            'python_version': {},
-            'required': {},
-            'optional': {},
-            'summary': {'required_missing': 0, 'optional_missing': 0}
+                if status['available']:
+                    available_packages += 1
+                    category_available += 1
+                else:
+                    self.missing_dependencies.append(package)
+                    if category != 'optional':
+                        self.failed_imports.append(package)
+            
+            self.dependency_status[category] = {
+                'packages': category_status,
+                'available_count': category_available,
+                'total_count': len(packages),
+                'availability_ratio': (category_available / len(packages)) * 100
+            }
+        
+        # Generate summary report
+        report = {
+            'total_packages': total_packages,
+            'available_packages': available_packages,
+            'missing_packages': len(self.missing_dependencies),
+            'critical_missing': len(self.failed_imports),
+            'overall_ratio': (available_packages / total_packages) * 100,
+            'dependency_status': self.dependency_status,
+            'missing_dependencies': self.missing_dependencies,
+            'failed_imports': self.failed_imports,
+            'system_compatible': len(self.failed_imports) == 0
         }
         
-        # Check Python version
-        python_ok, python_msg = self.check_python_version()
-        results['python_version'] = {'status': python_ok, 'message': python_msg}
+        self._log_dependency_report(report)
+        return report
+    
+    def _check_package(self, package_name: str) -> Dict[str, Any]:
+        """
+        Check availability of a specific package.
         
-        # Check required dependencies
-        for dep, description in self.required_deps.items():
-            available, message, version = self.check_dependency(dep)
-            results['required'][dep] = {
-                'available': available,
-                'message': message,
-                'description': description,
-                'version': version
+        Args:
+            package_name: Name of the package to check
+            
+        Returns:
+            Dictionary containing package status information
+        """
+        try:
+            # Try to import the package
+            module = importlib.import_module(package_name)
+            
+            # Get package version if available
+            version = getattr(module, '__version__', 'unknown')
+            
+            # Get package location
+            location = getattr(module, '__file__', 'unknown')
+            
+            return {
+                'available': True,
+                'version': version,
+                'location': location,
+                'import_time': self._measure_import_time(package_name)
             }
-            if not available:
-                results['summary']['required_missing'] += 1
-        
-        # Check optional dependencies
-        for dep, description in self.optional_deps.items():
-            available, message, version = self.check_dependency(dep)
-            results['optional'][dep] = {
-                'available': available,
-                'message': message,
-                'description': description,
-                'version': version
+            
+        except ImportError as e:
+            return {
+                'available': False,
+                'error': str(e),
+                'import_time': None
             }
-            if not available:
-                results['summary']['optional_missing'] += 1
-        
-        return results
+        except Exception as e:
+            return {
+                'available': False,
+                'error': f"Unexpected error: {str(e)}",
+                'import_time': None
+            }
     
-    def check_directories(self) -> Dict[str, bool]:
-        """Check if required directories exist"""
-        required_dirs = [
-            'config',
-            'memory',
-            'logs',
-            'output',
-            'output/data_analysis',
-            'output/security',
-            'output/network_intelligence',
-            'output/remote_control',
-            'output/exploits',
-            'output/codegen',
-            'plugins',
-            'agents',
-            'ui',
-            'admin_panel'
-        ]
+    def _measure_import_time(self, package_name: str) -> Optional[float]:
+        """
+        Measure the time it takes to import a package.
         
-        results = {}
-        for directory in required_dirs:
-            path = Path(directory)
-            results[directory] = path.exists() and path.is_dir()
-        
-        return results
+        Args:
+            package_name: Name of the package to measure
+            
+        Returns:
+            Import time in seconds, or None if measurement fails
+        """
+        try:
+            import time
+            start_time = time.time()
+            importlib.import_module(package_name)
+            end_time = time.time()
+            return end_time - start_time
+        except Exception:
+            return None
     
-    def check_config_files(self) -> Dict[str, bool]:
-        """Check if required configuration files exist"""
-        required_files = [
-            'config/secret.key',
-            'requirements.txt',
-            'README.md'
-        ]
+    def _log_dependency_report(self, report: Dict[str, Any]) -> None:
+        """
+        Log dependency report with appropriate log levels.
         
-        results = {}
-        for file_path in required_files:
-            path = Path(file_path)
-            results[file_path] = path.exists() and path.is_file()
+        Args:
+            report: Dependency report to log
+        """
+        overall_ratio = report['overall_ratio']
         
-        return results
-    
-    def generate_installation_command(self) -> str:
-        """Generate pip install command for missing dependencies"""
-        missing_deps = []
-        results = self.check_all_dependencies()
-        
-        for dep, info in results['required'].items():
-            if not info['available'] and dep not in ['pathlib', 'logging', 'threading', 'json']:
-                if dep == 'flask_cors':
-                    missing_deps.append('flask-cors')
-                elif dep == 'python_nmap':
-                    missing_deps.append('python-nmap')
-                elif dep == 'speech_recognition':
-                    missing_deps.append('SpeechRecognition')
-                else:
-                    missing_deps.append(dep)
-        
-        for dep, info in results['optional'].items():
-            if not info['available']:
-                if dep == 'flask_cors':
-                    missing_deps.append('flask-cors')
-                elif dep == 'python_nmap':
-                    missing_deps.append('python-nmap')
-                elif dep == 'speech_recognition':
-                    missing_deps.append('SpeechRecognition')
-                elif dep == 'whisper':
-                    missing_deps.append('openai-whisper')
-                else:
-                    missing_deps.append(dep)
-        
-        if missing_deps:
-            return f"pip install {' '.join(missing_deps)}"
-        return "All dependencies are already installed!"
-    
-    def print_status_report(self):
-        """Print a comprehensive status report"""
-        print("\n" + "="*60)
-        print("🔧 IGED DEPENDENCY STATUS REPORT")
-        print("="*60)
-        
-        # Check dependencies
-        results = self.check_all_dependencies()
-        
-        # Python version
-        print(f"\n📍 {results['python_version']['message']}")
-        
-        # Required dependencies
-        print(f"\n🔴 REQUIRED DEPENDENCIES:")
-        for dep, info in results['required'].items():
-            version_str = f" (v{info['version']})" if info['version'] else ""
-            print(f"   {info['message']}{version_str} - {info['description']}")
-        
-        # Optional dependencies
-        print(f"\n🟡 OPTIONAL DEPENDENCIES:")
-        for dep, info in results['optional'].items():
-            version_str = f" (v{info['version']})" if info['version'] else ""
-            print(f"   {info['message']}{version_str} - {info['description']}")
-        
-        # Directory check
-        print(f"\n📁 DIRECTORY STRUCTURE:")
-        dir_results = self.check_directories()
-        for directory, exists in dir_results.items():
-            status = "✅" if exists else "❌"
-            print(f"   {status} {directory}")
-        
-        # Config files check
-        print(f"\n📄 CONFIGURATION FILES:")
-        file_results = self.check_config_files()
-        for file_path, exists in file_results.items():
-            status = "✅" if exists else "❌"
-            print(f"   {status} {file_path}")
-        
-        # Summary
-        required_missing = results['summary']['required_missing']
-        optional_missing = results['summary']['optional_missing']
-        
-        print(f"\n📊 SUMMARY:")
-        print(f"   Required dependencies missing: {required_missing}")
-        print(f"   Optional dependencies missing: {optional_missing}")
-        
-        if required_missing > 0 or optional_missing > 0:
-            print(f"\n💡 TO INSTALL MISSING DEPENDENCIES:")
-            print(f"   {self.generate_installation_command()}")
-            print(f"\n   Or run the automated installer:")
-            print(f"   python install_dependencies.py")
-            print(f"   install_deps.bat  (Windows)")
+        if overall_ratio >= 90:
+            logger.info(f"✅ Dependency check complete: {overall_ratio:.1f}% available")
+        elif overall_ratio >= 70:
+            logger.warning(f"⚠️ Some dependencies missing: {overall_ratio:.1f}% available")
         else:
-            print(f"\n🎉 ALL DEPENDENCIES ARE INSTALLED!")
+            logger.error(f"❌ Many dependencies missing: {overall_ratio:.1f}% available")
         
-        print("="*60)
-
-def main():
-    """Main function for standalone execution"""
-    checker = DependencyChecker()
-    checker.print_status_report()
-
-if __name__ == "__main__":
-    main() 
+        if report['critical_missing'] > 0:
+            logger.error(f"❌ Critical dependencies missing: {report['failed_imports']}")
+        
+        if report['missing_dependencies']:
+            logger.info(f"📋 Missing packages: {report['missing_dependencies']}")
+    
+    def install_missing_dependencies(self, category: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Install missing dependencies.
+        
+        Args:
+            category: Specific category to install, or None for all
+            
+        Returns:
+            Dictionary containing installation results
+        """
+        logger.info("📦 Installing missing dependencies...")
+        
+        packages_to_install = []
+        
+        if category:
+            if category in self.required_packages:
+                packages_to_install = [
+                    pkg for pkg in self.required_packages[category]
+                    if pkg in self.missing_dependencies
+                ]
+            else:
+                logger.error(f"❌ Unknown category: {category}")
+                return {'success': False, 'error': f'Unknown category: {category}'}
+        else:
+            # Install all missing non-optional packages
+            for cat, packages in self.required_packages.items():
+                if cat != 'optional':
+                    packages_to_install.extend([
+                        pkg for pkg in packages
+                        if pkg in self.missing_dependencies
+                    ])
+        
+        if not packages_to_install:
+            logger.info("✅ No packages to install")
+            return {'success': True, 'installed_packages': [], 'message': 'No packages to install'}
+        
+        installation_results = {}
+        successful_installs = []
+        failed_installs = []
+        
+        for package in packages_to_install:
+            try:
+                result = self._install_package(package)
+                installation_results[package] = result
+                
+                if result['success']:
+                    successful_installs.append(package)
+                    logger.info(f"✅ Successfully installed: {package}")
+                else:
+                    failed_installs.append(package)
+                    logger.error(f"❌ Failed to install: {package} - {result.get('error', 'Unknown error')}")
+                    
+            except Exception as e:
+                failed_installs.append(package)
+                installation_results[package] = {'success': False, 'error': str(e)}
+                logger.error(f"❌ Installation error for {package}: {e}")
+        
+        return {
+            'success': len(failed_installs) == 0,
+            'installed_packages': successful_installs,
+            'failed_packages': failed_installs,
+            'installation_results': installation_results,
+            'total_attempted': len(packages_to_install)
+        }
+    
+    def _install_package(self, package_name: str) -> Dict[str, Any]:
+        """
+        Install a specific package using pip.
+        
+        Args:
+            package_name: Name of the package to install
+            
+        Returns:
+            Dictionary containing installation result
+        """
+        try:
+            # Map some package names to their pip equivalents
+            pip_package_name = self._get_pip_package_name(package_name)
+            
+            # Run pip install
+            result = subprocess.run(
+                [sys.executable, '-m', 'pip', 'install', pip_package_name],
+                capture_output=True,
+                text=True,
+                timeout=300  # 5 minute timeout
+            )
+            
+            if result.returncode == 0:
+                return {
+                    'success': True,
+                    'package': package_name,
+                    'pip_package': pip_package_name,
+                    'output': result.stdout
+                }
+            else:
+                return {
+                    'success': False,
+                    'package': package_name,
+                    'pip_package': pip_package_name,
+                    'error': result.stderr,
+                    'return_code': result.returncode
+                }
+                
+        except subprocess.TimeoutExpired:
+            return {
+                'success': False,
+                'package': package_name,
+                'error': 'Installation timeout (5 minutes)'
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'package': package_name,
+                'error': str(e)
+            }
+    
+    def _get_pip_package_name(self, package_name: str) -> str:
+        """
+        Get the pip package name for a given import name.
+        
+        Args:
+            package_name: Import name of the package
+            
+        Returns:
+            Pip package name
+        """
+        # Mapping of import names to pip package names
+        pip_mapping = {
+            'speech_recognition': 'SpeechRecognition',
+            'PIL': 'Pillow',
+            'cv2': 'opencv-python',
+            'sklearn': 'scikit-learn',
+            'flask_cors': 'Flask-CORS'
+        }
+        
+        return pip_mapping.get(package_name, package_name)
+    
+    def check_python_version(self) -> Dict[str, Any]:
+        """
+        Check Python version compatibility.
+        
+        Returns:
+            Dictionary containing Python version information
+        """
+        version_info = sys.version_info
+        version_string = f"{version_info.major}.{version_info.minor}.{version_info.micro}"
+        
+        # Check if version meets minimum requirements
+        min_version = (3, 8)
+        compatible = version_info[:2] >= min_version
+        
+        return {
+            'version': version_string,
+            'version_info': version_info[:3],
+            'compatible': compatible,
+            'minimum_required': f"{min_version[0]}.{min_version[1]}",
+            'platform': sys.platform,
+            'executable': sys.executable
+        }
+    
+    def check_system_requirements(self) -> Dict[str, Any]:
+        """
+        Check system requirements and compatibility.
+        
+        Returns:
+            Dictionary containing system requirement status
+        """
+        requirements = {
+            'python_version': self.check_python_version(),
+            'available_memory': self._check_available_memory(),
+            'disk_space': self._check_disk_space(),
+            'network_access': self._check_network_access()
+        }
+        
+        # Determine overall compatibility
+        compatible = all([
+            requirements['python_version']['compatible'],
+            requirements['available_memory']['sufficient'],
+            requirements['disk_space']['sufficient']
+        ])
+        
+        requirements['overall_compatible'] = compatible
+        
+        return requirements
+    
+    def _check_available_memory(self) -> Dict[str, Any]:
+        """
+        Check available system memory.
+        
+        Returns:
+            Dictionary containing memory information
+        """
+        try:
+            if 'psutil' in [pkg for cat in self.required_packages.values() for pkg in cat]:
+                import psutil
+                memory = psutil.virtual_memory()
+                
+                # Require at least 1GB of available memory
+                min_memory_gb = 1.0
+                available_gb = memory.available / (1024**3)
+                sufficient = available_gb >= min_memory_gb
+                
+                return {
+                    'total_gb': memory.total / (1024**3),
+                    'available_gb': available_gb,
+                    'used_percent': memory.percent,
+                    'sufficient': sufficient,
+                    'minimum_required_gb': min_memory_gb
+                }
+            else:
+                return {
+                    'available': False,
+                    'error': 'psutil not available for memory check',
+                    'sufficient': True  # Assume sufficient if we can't check
+                }
+                
+        except Exception as e:
+            return {
+                'available': False,
+                'error': str(e),
+                'sufficient': True  # Assume sufficient if we can't check
+            }
+    
+    def _check_disk_space(self) -> Dict[str, Any]:
+        """
+        Check available disk space.
+        
+        Returns:
+            Dictionary containing disk space information
+        """
+        try:
+            if 'psutil' in [pkg for cat in self.required_packages.values() for pkg in cat]:
+                import psutil
+                disk = psutil.disk_usage('.')
+                
+                # Require at least 500MB of free space
+                min_space_gb = 0.5
+                free_gb = disk.free / (1024**3)
+                sufficient = free_gb >= min_space_gb
+                
+                return {
+                    'total_gb': disk.total / (1024**3),
+                    'free_gb': free_gb,
+                    'used_percent': (disk.used / disk.total) * 100,
+                    'sufficient': sufficient,
+                    'minimum_required_gb': min_space_gb
+                }
+            else:
+                return {
+                    'available': False,
+                    'error': 'psutil not available for disk check',
+                    'sufficient': True  # Assume sufficient if we can't check
+                }
+                
+        except Exception as e:
+            return {
+                'available': False,
+                'error': str(e),
+                'sufficient': True  # Assume sufficient if we can't check
+            }
+    
+    def _check_network_access(self) -> Dict[str, Any]:
+        """
+        Check network access for package installation.
+        
+        Returns:
+            Dictionary containing network access information
+        """
+        try:
+            import urllib.request
+            import socket
+            
+            # Test connection to PyPI
+            socket.setdefaulttimeout(10)
+            urllib.request.urlopen('https://pypi.org')
+            
+            return {
+                'available': True,
+                'can_install_packages': True
+            }
+            
+        except Exception as e:
+            return {
+                'available': False,
+                'can_install_packages': False,
+                'error': str(e)
+            }
+    
+    def generate_requirements_file(self, file_path: str = "requirements.txt") -> bool:
+        """
+        Generate a requirements.txt file with all dependencies.
+        
+        Args:
+            file_path: Path where to save the requirements file
+            
+        Returns:
+            True if file was generated successfully, False otherwise
+        """
+        try:
+            requirements_content = []
+            
+            # Add header
+            requirements_content.append("# IGED System Requirements")
+            requirements_content.append("# Generated automatically by DependencyChecker")
+            requirements_content.append("")
+            
+            # Add packages by category
+            for category, packages in self.required_packages.items():
+                if category == 'optional':
+                    continue  # Skip optional packages
+                    
+                requirements_content.append(f"# {category.title()} dependencies")
+                
+                for package in packages:
+                    pip_name = self._get_pip_package_name(package)
+                    
+                    # Try to get version if package is available
+                    if package in self.dependency_status:
+                        pkg_status = self.dependency_status[package]
+                        if pkg_status.get('available') and pkg_status.get('version') != 'unknown':
+                            requirements_content.append(f"{pip_name}>={pkg_status['version']}")
+                        else:
+                            requirements_content.append(pip_name)
+                    else:
+                        requirements_content.append(pip_name)
+                
+                requirements_content.append("")
+            
+            # Write to file
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write('\n'.join(requirements_content))
+            
+            logger.info(f"📋 Requirements file generated: {file_path}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to generate requirements file: {e}")
+            return False
+    
+    def get_dependency_summary(self) -> str:
+        """
+        Get a human-readable dependency summary.
+        
+        Returns:
+            Formatted string containing dependency summary
+        """
+        if not self.dependency_status:
+            return "❌ No dependency check has been performed yet."
+        
+        summary_lines = []
+        summary_lines.append("🔧 IGED Dependency Summary")
+        summary_lines.append("=" * 30)
+        
+        for category, status in self.dependency_status.items():
+            available = status['available_count']
+            total = status['total_count']
+            ratio = status['availability_ratio']
+            
+            if ratio == 100:
+                status_icon = "✅"
+            elif ratio >= 70:
+                status_icon = "⚠️"
+            else:
+                status_icon = "❌"
+            
+            summary_lines.append(f"{status_icon} {category.title()}: {available}/{total} ({ratio:.1f}%)")
+            
+            # List missing packages
+            missing_in_category = []
+            for pkg, pkg_status in status['packages'].items():
+                if not pkg_status['available']:
+                    missing_in_category.append(pkg)
+            
+            if missing_in_category:
+                summary_lines.append(f"   Missing: {', '.join(missing_in_category)}")
+        
+        if self.missing_dependencies:
+            summary_lines.append("")
+            summary_lines.append("📋 Installation command:")
+            pip_packages = [self._get_pip_package_name(pkg) for pkg in self.missing_dependencies]
+            summary_lines.append(f"pip install {' '.join(pip_packages)}")
+        
+        return '\n'.join(summary_lines) 

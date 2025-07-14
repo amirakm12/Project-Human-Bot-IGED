@@ -1,16 +1,28 @@
 """
 Command Parser for IGED
 Converts natural language to structured commands
+
+This module provides natural language processing capabilities to parse
+user commands and convert them into structured format for agent execution.
 """
 
-import re
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
+
 class CommandParser:
+    """
+    Natural language command parser for IGED system.
+    
+    This class converts natural language input into structured commands
+    that can be executed by various agents in the IGED system.
+    """
+    
     def __init__(self):
+        """Initialize the command parser with predefined patterns."""
         self.command_patterns = {
             'codegen': [
                 r'(?:generate|create|make|build)\s+(?:a\s+)?(?:flask|web|python|script|api|rest|html|website)',
@@ -58,7 +70,22 @@ class CommandParser:
         }
     
     def parse_command(self, text: str) -> Dict[str, Any]:
-        """Parse natural language command into structured format"""
+        """
+        Parse natural language command into structured format.
+        
+        Args:
+            text: Natural language command string
+            
+        Returns:
+            Dict containing parsed command structure with fields:
+            - original_text: Original input text
+            - command_type: Type of command identified
+            - agent: Target agent for command execution
+            - target: Target resource/system for command
+            - parameters: Additional parameters extracted
+            - confidence: Confidence score for parsing
+            - timestamp: Timestamp of parsing
+        """
         try:
             text = text.strip()
             if not text:
@@ -91,267 +118,268 @@ class CommandParser:
             logger.error(f"❌ Command parsing failed: {e}")
             return self._create_error_command(f"Parsing error: {str(e)}")
     
-    def _identify_command_type(self, text: str) -> tuple:
-        """Identify the type of command and appropriate agent"""
+    def _identify_command_type(self, text: str) -> Tuple[str, str]:
+        """
+        Identify the type of command and appropriate agent.
+        
+        Args:
+            text: Input text to analyze
+            
+        Returns:
+            Tuple of (command_type, agent_name)
+        """
+        import re
+        
         text_lower = text.lower()
         
         # Check each agent's patterns
         for agent, patterns in self.command_patterns.items():
             for pattern in patterns:
-                if re.search(pattern, text_lower, re.IGNORECASE):
-                    command_type = self._get_command_type(text_lower, agent)
+                if re.search(pattern, text_lower):
+                    command_type = self._get_command_type(text, agent)
                     return command_type, agent
         
         # Default to general command
-        return 'general', 'orchestrator'
+        return "general", "codegen"
     
     def _get_command_type(self, text: str, agent: str) -> str:
-        """Get specific command type based on agent and text"""
-        if agent == 'codegen':
-            if 'flask' in text or 'web' in text:
-                return 'generate_web_app'
-            elif 'python' in text or 'script' in text:
-                return 'generate_script'
-            elif 'api' in text or 'rest' in text:
-                return 'generate_api'
-            elif 'html' in text or 'website' in text:
-                return 'generate_website'
-            else:
-                return 'generate_code'
+        """
+        Get specific command type for an agent.
         
-        elif agent == 'secops':
-            if 'port' in text:
-                return 'port_scan'
-            elif 'network' in text:
-                return 'network_scan'
-            elif 'web' in text or 'http' in text:
-                return 'web_security_scan'
-            else:
-                return 'security_scan'
+        Args:
+            text: Input text
+            agent: Agent name
+            
+        Returns:
+            Specific command type string
+        """
+        import re
         
-        elif agent == 'advanced_secops':
-            if 'penetrate' in text or 'hack' in text:
-                return 'penetration_test'
-            elif 'exploit' in text:
-                return 'exploit_target'
-            elif 'persistent' in text or 'backdoor' in text:
-                return 'establish_persistence'
-            else:
-                return 'advanced_security_scan'
+        text_lower = text.lower()
         
-        elif agent == 'network_intelligence':
-            if 'monitor' in text or 'surveillance' in text:
-                return 'network_monitoring'
-            elif 'intercept' in text or 'capture' in text:
-                return 'packet_interception'
-            elif 'analyze' in text or 'intelligence' in text:
-                return 'traffic_analysis'
-            elif 'device' in text or 'inventory' in text:
-                return 'device_discovery'
-            else:
-                return 'comprehensive_intelligence'
+        # Define command type mappings
+        command_type_mappings = {
+            'codegen': {
+                'web': ['flask', 'web', 'website', 'html'],
+                'api': ['api', 'rest', 'endpoint'],
+                'script': ['script', 'python', 'code'],
+                'generate': ['generate', 'create', 'make', 'build']
+            },
+            'secops': {
+                'scan': ['scan', 'check', 'test'],
+                'audit': ['audit', 'security'],
+                'vulnerability': ['vulnerability', 'vuln'],
+                'penetration': ['penetration', 'pentest']
+            },
+            'advanced_secops': {
+                'exploit': ['exploit', 'hack', 'breach'],
+                'persistence': ['persistent', 'backdoor'],
+                'advanced': ['advanced', 'deep', 'comprehensive']
+            },
+            'network_intelligence': {
+                'monitor': ['monitor', 'surveillance'],
+                'analyze': ['analyze', 'decode'],
+                'discovery': ['discovery', 'inventory'],
+                'reconnaissance': ['reconnaissance', 'intel']
+            },
+            'remote_control': {
+                'connect': ['connect', 'establish'],
+                'execute': ['execute', 'run'],
+                'deploy': ['deploy', 'payload'],
+                'monitor': ['monitor', 'surveillance']
+            },
+            'dataminer': {
+                'analyze': ['analyze', 'process'],
+                'visualize': ['visualize', 'plot', 'chart'],
+                'extract': ['extract', 'mine'],
+                'statistics': ['statistics', 'stats']
+            }
+        }
         
-        elif agent == 'remote_control':
-            if 'connect' in text or 'establish' in text:
-                return 'establish_connection'
-            elif 'control' in text or 'command' in text:
-                return 'execute_remote_command'
-            elif 'monitor' in text or 'surveillance' in text:
-                return 'remote_monitoring'
-            elif 'payload' in text or 'deploy' in text:
-                return 'deploy_payload'
-            else:
-                return 'remote_system_control'
+        if agent in command_type_mappings:
+            for cmd_type, keywords in command_type_mappings[agent].items():
+                if any(keyword in text_lower for keyword in keywords):
+                    return cmd_type
         
-        elif agent == 'dataminer':
-            if 'analyze' in text:
-                return 'analyze_data'
-            elif 'extract' in text or 'mine' in text:
-                return 'extract_data'
-            elif 'visualize' in text or 'plot' in text:
-                return 'visualize_data'
-            elif 'statistics' in text or 'stats' in text:
-                return 'generate_statistics'
-            else:
-                return 'process_data'
-        
-        return 'execute'
+        return "general"
     
     def _extract_target(self, text: str, command_type: str) -> str:
-        """Extract target from command text"""
-        # Look for file paths
+        """
+        Extract target information from command text.
+        
+        Args:
+            text: Input text
+            command_type: Type of command
+            
+        Returns:
+            Target string or empty string if not found
+        """
+        import re
+        
+        # Try to extract common target patterns
+        for pattern_name, pattern in self.parameter_patterns.items():
+            if pattern_name in ['ip_address', 'hostname', 'url']:
+                match = re.search(pattern, text)
+                if match:
+                    return match.group(1) if match.groups() else match.group(0)
+        
+        # Extract file paths
         file_match = re.search(self.parameter_patterns['file_path'], text)
         if file_match:
             return file_match.group(1)
         
-        # Look for URLs
-        url_match = re.search(self.parameter_patterns['url'], text)
-        if url_match:
-            return url_match.group(0)
-        
-        # Look for IP addresses
-        ip_match = re.search(self.parameter_patterns['ip_address'], text)
-        if ip_match:
-            return ip_match.group(0)
-        
-        # Look for hostnames
-        hostname_match = re.search(self.parameter_patterns['hostname'], text, re.IGNORECASE)
-        if hostname_match:
-            return hostname_match.group(1)
-        
-        # Look for generic targets
-        target_match = re.search(self.parameter_patterns['target'], text, re.IGNORECASE)
+        # Extract general targets
+        target_match = re.search(self.parameter_patterns['target'], text)
         if target_match:
             return target_match.group(1)
         
-        # Extract meaningful words as target
-        words = text.split()
-        if len(words) > 2:
-            # Skip common command words
-            skip_words = {'generate', 'create', 'make', 'build', 'scan', 'check', 'test', 'analyze', 'process'}
-            target_words = [word for word in words[2:] if word.lower() not in skip_words]
-            if target_words:
-                return ' '.join(target_words[:3])  # Limit to 3 words
-        
-        return text
+        return ""
     
     def _extract_parameters(self, text: str) -> Dict[str, Any]:
-        """Extract parameters from command text"""
+        """
+        Extract additional parameters from command text.
+        
+        Args:
+            text: Input text
+            
+        Returns:
+            Dictionary of extracted parameters
+        """
+        import re
+        
         parameters = {}
         
-        # Extract file paths
-        file_matches = re.findall(self.parameter_patterns['file_path'], text)
-        if file_matches:
-            parameters['files'] = file_matches
-        
-        # Extract URLs
-        url_matches = re.findall(self.parameter_patterns['url'], text)
-        if url_matches:
-            parameters['urls'] = url_matches
-        
-        # Extract IP addresses
-        ip_matches = re.findall(self.parameter_patterns['ip_address'], text)
-        if ip_matches:
-            parameters['ip_addresses'] = ip_matches
-        
-        # Extract boolean flags
-        boolean_flags = {
-            'verbose': r'\b(?:verbose|detailed|full)\b',
-            'quiet': r'\b(?:quiet|silent|minimal)\b',
-            'force': r'\b(?:force|overwrite)\b',
-            'recursive': r'\b(?:recursive|recursively)\b'
-        }
-        
-        for flag, pattern in boolean_flags.items():
-            if re.search(pattern, text, re.IGNORECASE):
-                parameters[flag] = True
-        
-        # Extract numeric values
-        numeric_patterns = {
-            'timeout': r'(?:timeout|time)\s+(\d+)',
-            'limit': r'(?:limit|max|maximum)\s+(\d+)',
-            'port': r'(?:port)\s+(\d+)'
-        }
-        
-        for param, pattern in numeric_patterns.items():
-            match = re.search(pattern, text, re.IGNORECASE)
+        # Extract all parameter types
+        for param_type, pattern in self.parameter_patterns.items():
+            match = re.search(pattern, text)
             if match:
-                parameters[param] = int(match.group(1))
+                parameters[param_type] = match.group(1) if match.groups() else match.group(0)
+        
+        # Extract port numbers
+        port_match = re.search(r'port\s+(\d+)', text, re.IGNORECASE)
+        if port_match:
+            parameters['port'] = int(port_match.group(1))
+        
+        # Extract output formats
+        format_match = re.search(r'(?:as|in|to)\s+(json|csv|html|txt|pdf)', text, re.IGNORECASE)
+        if format_match:
+            parameters['output_format'] = format_match.group(1).lower()
+        
+        # Extract verbosity levels
+        if any(word in text.lower() for word in ['verbose', 'detailed', 'full']):
+            parameters['verbose'] = True
+        
+        if any(word in text.lower() for word in ['quiet', 'silent', 'minimal']):
+            parameters['verbose'] = False
         
         return parameters
     
     def _calculate_confidence(self, text: str, command_type: str) -> float:
-        """Calculate confidence score for command parsing"""
-        confidence = 0.5  # Base confidence
+        """
+        Calculate confidence score for parsed command.
         
-        # Increase confidence for longer, more specific commands
-        if len(text.split()) > 3:
-            confidence += 0.2
+        Args:
+            text: Input text
+            command_type: Identified command type
+            
+        Returns:
+            Confidence score between 0.0 and 1.0
+        """
+        import re
         
-        # Increase confidence for specific keywords
-        specific_keywords = ['generate', 'create', 'scan', 'analyze', 'process']
-        if any(keyword in text.lower() for keyword in specific_keywords):
-            confidence += 0.2
+        base_confidence = 0.5
         
-        # Increase confidence for file paths or URLs
-        if re.search(self.parameter_patterns['file_path'], text) or re.search(self.parameter_patterns['url'], text):
-            confidence += 0.1
+        # Increase confidence for specific patterns
+        if command_type != "general":
+            base_confidence += 0.3
         
-        return min(confidence, 1.0)
+        # Check for specific keywords
+        specific_keywords = len(re.findall(r'\b(?:scan|generate|create|analyze|monitor)\b', text.lower()))
+        base_confidence += min(specific_keywords * 0.1, 0.2)
+        
+        # Check for parameters
+        parameter_count = len(self._extract_parameters(text))
+        base_confidence += min(parameter_count * 0.05, 0.1)
+        
+        return min(base_confidence, 1.0)
     
     def _get_timestamp(self) -> str:
-        """Get current timestamp"""
-        from datetime import datetime
+        """
+        Get current timestamp in ISO format.
+        
+        Returns:
+            ISO formatted timestamp string
+        """
         return datetime.now().isoformat()
     
     def _create_error_command(self, error_message: str) -> Dict[str, Any]:
-        """Create error command structure"""
+        """
+        Create error command structure.
+        
+        Args:
+            error_message: Error description
+            
+        Returns:
+            Error command dictionary
+        """
         return {
-            'original_text': '',
-            'command_type': 'error',
-            'agent': 'unknown',
-            'target': '',
+            'original_text': "",
+            'command_type': "error",
+            'agent': "none",
+            'target': "",
             'parameters': {},
-            'error': error_message,
             'confidence': 0.0,
-            'timestamp': self._get_timestamp()
+            'timestamp': self._get_timestamp(),
+            'error': error_message
         }
     
     def get_supported_commands(self) -> Dict[str, List[str]]:
-        """Get list of supported commands by agent"""
-        return {
-            'codegen': [
-                'generate_web_app',
-                'generate_script', 
-                'generate_api',
-                'generate_website',
-                'generate_code'
-            ],
-            'secops': [
-                'security_scan',
-                'port_scan',
-                'network_scan',
-                'web_security_scan'
-            ],
-            'advanced_secops': [
-                'penetration_test',
-                'exploit_target',
-                'establish_persistence',
-                'advanced_security_scan',
-                'zero_day_scanning'
-            ],
-            'network_intelligence': [
-                'network_monitoring',
-                'packet_interception',
-                'traffic_analysis',
-                'device_discovery',
-                'comprehensive_intelligence'
-            ],
-            'remote_control': [
-                'establish_connection',
-                'execute_remote_command',
-                'remote_monitoring',
-                'deploy_payload',
-                'remote_system_control'
-            ],
-            'dataminer': [
-                'analyze_data',
-                'extract_data',
-                'visualize_data',
-                'generate_statistics',
-                'process_data'
-            ]
-        }
+        """
+        Get dictionary of supported commands by agent.
+        
+        Returns:
+            Dictionary mapping agent names to their command patterns
+        """
+        supported_commands = {}
+        
+        for agent, patterns in self.command_patterns.items():
+            # Convert regex patterns to human-readable descriptions
+            descriptions = []
+            for pattern in patterns:
+                # Simplify regex patterns for user display
+                simplified = pattern.replace(r'(?:', '').replace(r')', '')
+                simplified = simplified.replace(r'\s+', ' ')
+                simplified = simplified.replace(r'?:', '')
+                descriptions.append(simplified)
+            
+            supported_commands[agent] = descriptions
+        
+        return supported_commands
     
     def validate_command(self, command: Dict[str, Any]) -> bool:
-        """Validate parsed command structure"""
-        required_fields = ['command_type', 'agent', 'target']
+        """
+        Validate a parsed command structure.
         
-        for field in required_fields:
-            if field not in command:
-                return False
+        Args:
+            command: Command dictionary to validate
+            
+        Returns:
+            True if command is valid, False otherwise
+        """
+        required_fields = ['original_text', 'command_type', 'agent', 'target', 'parameters', 'confidence', 'timestamp']
         
-        if command['command_type'] == 'error':
+        # Check required fields
+        if not all(field in command for field in required_fields):
+            return False
+        
+        # Check data types
+        if not isinstance(command['parameters'], dict):
+            return False
+        
+        if not isinstance(command['confidence'], (int, float)):
+            return False
+        
+        if not (0.0 <= command['confidence'] <= 1.0):
             return False
         
         return True 
