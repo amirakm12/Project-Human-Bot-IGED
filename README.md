@@ -30,7 +30,7 @@ A sovereign-grade, voice-activated, AI-driven execution engine designed to serve
 - **Remote Control Agent** - Remote device control and system management
 - **DataMiner Agent** - Data analysis and mining operations
 
-## 🛠️ Installation
+## 🛠️ Installation & Launch
 
 ### Quick Installation (Windows)
 ```bash
@@ -51,8 +51,26 @@ python -c "from cryptography.fernet import Fernet; key = Fernet.generate_key(); 
 
 # Test installation
 python test_installation.py
+```
 
-# Run the assistant
+## 🚀 How to Launch IGED
+
+### Quick Start (Choose any method)
+```bash
+# Primary entry point (recommended)
+python main.py
+
+# Platform-specific launchers
+./run.sh                 # Linux/Mac
+run.bat                  # Windows (or double-click)
+
+# Alternative Python launcher
+python run.py
+```
+
+### Advanced Launch
+```bash
+# Full control with detailed logging
 python launcher.py
 ```
 
