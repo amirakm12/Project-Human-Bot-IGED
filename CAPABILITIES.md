@@ -215,6 +215,22 @@ IGED has been enhanced with advanced security, penetration testing, and intellig
 - capture screenshot
 - record video [duration]
 
+## 💀 **Digital Heist Operations**
+
+### **Features**
+- Simulated infiltration of major tech infrastructures (Facebook, Google, Microsoft, Apple, IBM)
+- Data extraction: blueprints, master keys, schematics
+- Exploit reverse-engineering and weaponization
+- Root access establishment
+- Trace erasure and stealth operations
+
+### **Commands**
+- infiltrate [target]
+- extract data from [target]
+- weaponize exploits for [target]
+- gain control of [target]
+- erase traces from [target]
+
 ## ⚠️ **Important Notice**
 
 **IGED is designed for legitimate security research, penetration testing, and authorized security assessments. Users are responsible for ensuring compliance with all applicable laws and regulations. This tool should only be used on systems you own or have explicit permission to test.**
