@@ -1,0 +1,1 @@
+import FatRatScreen from './components/screens/FatRatScreen';

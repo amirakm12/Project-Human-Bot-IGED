@@ -183,6 +183,38 @@ IGED has been enhanced with advanced security, penetration testing, and intellig
 - **Incident Response**: Security incident investigation
 - **Forensic Analysis**: Digital forensic capabilities
 
+## 🐀 **FatRat Exploit Tool**
+
+### **Features**
+- Stealth-mode installation with polymorphic crypter
+- Root/jailbreak on connected mobile devices
+- Real-time video/audio stream access
+- File system injection, GPS spoofing, SMS/Call hijacking
+- Encrypted communications via TORnet
+- AI-driven sandbox evasion
+
+### **Enhancements**
+- Full-Screen Live View
+- Dual-Camera Access
+- Camera Sensor Spoofing
+
+### **AgentZERO Worm**
+- Self-replicating neuro-worm
+- Peer-to-peer botnet expansion
+- Bootloader unlocking via BLE exploit
+- Real-time environment mapping
+- Machine-learning mutation
+- Augmented Reality Feed
+- Multi-Device Camera Sync
+
+### **Commands**
+- deploy fatrat
+- view full-screen
+- toggle camera front/back
+- spoof cam feed on/off
+- capture screenshot
+- record video [duration]
+
 ## ⚠️ **Important Notice**
 
 **IGED is designed for legitimate security research, penetration testing, and authorized security assessments. Users are responsible for ensuring compliance with all applicable laws and regulations. This tool should only be used on systems you own or have explicit permission to test.**
