@@ -1,17 +1,20 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { ReactNode } from 'react';
 import Sidebar from '../ui/Sidebar';
 import Header from '../ui/Header';
 import './AppLayout.css';
 
-const AppLayout: React.FC = () => {
+interface AppLayoutProps {
+  children: ReactNode;
+}
+
+const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <div className="app-layout">
       <Sidebar />
       <div className="main-content">
         <Header />
         <main className="content">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>
