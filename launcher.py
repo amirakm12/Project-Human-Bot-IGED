@@ -108,7 +108,7 @@ class IGEDLauncher:
             'agents',
             'ui/win_gui',
             'admin_panel',
-            'android-client',
+            'android_client',
             'logs'
         ]
         

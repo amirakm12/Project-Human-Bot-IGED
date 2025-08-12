@@ -127,7 +127,7 @@ Total files: {file_count}"""
     print("   ✅ Agent modules (agents/)")
     print("   ✅ Plugin system (plugins/)")
     print("   ✅ User interfaces (ui/, admin_panel/)")
-    print("   ✅ Android client (android_client/, android-client/)")
+    print("   ✅ Android client (android_client/)")
     print("   ✅ Build scripts and installers")
     print("   ✅ Documentation files")
     print("   ✅ Configuration and logs")

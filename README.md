@@ -342,22 +342,7 @@ The system is fully functional and will:
 
 The linter errors will disappear once you install the dependencies, and IGED will be fully operational with all features working! 🚀🤖 
 
-IGED is now able to start logging (to console), but it failed because it couldn't find the directory `android-client`.
-
-**How to fix:**
-You need to create the missing directory. Run this command in your project directory:
-
-```powershell
-mkdir android-client
-```
-
-After that, start IGED again:
-
-```powershell
-python launcher.py
-```
-
-Let me know if you want me to do this for you! 
+IGED previously referenced a deprecated `android-client` folder name. This has been standardized to `android_client`, and the launcher now auto-creates required directories. No manual steps are needed.
 
 The logging issue is now fixed in `launcher.py` (it will log to `logs/iged.log`). However, the encryption key is still not being created in the `config` directory, and IGED may not fully start without it.
 
