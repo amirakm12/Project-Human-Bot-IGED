@@ -156,7 +156,9 @@ class SystemOptimizer:
             info['memory_total'] = psutil.virtual_memory().total
             info['memory_available'] = psutil.virtual_memory().available
         except ImportError:
-            pass
+            # psutil not available, use defaults
+            info['cpu_count'] = 4
+            info['memory_available'] = 4 * 1024 * 1024 * 1024  # Assume 4GB
         
         return info
     

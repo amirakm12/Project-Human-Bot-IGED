@@ -47,7 +47,7 @@ class GUIFrameworkDetector:
             root = tk.Tk()
             root.withdraw()
             root.destroy()
-            return True, f"tkinter (Tcl/Tk {tk.TclVersion})"
+            return True, f"tkinter (Tcl/Tk {tk.TclVersion if hasattr(tk, 'TclVersion') else 'unknown'})"
         except ImportError:
             return False, "tkinter not installed"
         except Exception as e:
@@ -72,8 +72,6 @@ class PerformanceOptimizer:
         
     def optimize_for_system(self) -> Dict[str, Any]:
         """Determine optimal settings based on system capabilities"""
-        import psutil
-        
         settings = {
             'use_hardware_acceleration': True,
             'enable_animations': True,
@@ -83,6 +81,8 @@ class PerformanceOptimizer:
         }
         
         try:
+            import psutil
+            
             # Check available memory
             memory = psutil.virtual_memory()
             if memory.available < 2 * 1024 * 1024 * 1024:  # Less than 2GB
@@ -99,6 +99,9 @@ class PerformanceOptimizer:
                 settings['use_hardware_acceleration'] = False
                 settings['update_frequency'] = 200
             
+        except ImportError:
+            # psutil not available, use default settings
+            logger.info("psutil not available, using default performance settings")
         except Exception as e:
             logger.warning(f"Could not optimize performance settings: {e}")
         
@@ -205,6 +208,7 @@ class GUIManager:
         try:
             # Import Qt6 GUI module
             from .main_window_qt6 import IGEDGUI, QApplication
+            from PySide6.QtCore import Qt
             
             # Create or get QApplication
             self.app = QApplication.instance()
@@ -218,7 +222,12 @@ class GUIManager:
             
             # Apply performance optimizations
             if self.settings['use_hardware_acceleration']:
-                self.app.setAttribute(Qt.AA_UseOpenGLES, True)
+                # Qt6 uses different attribute system
+                try:
+                    self.app.setAttribute(Qt.AA_UseDesktopOpenGL, True)
+                except AttributeError:
+                    # Fallback for different Qt versions
+                    pass
             
             # Create main window
             self.gui_instance = IGEDGUI(self.components)
