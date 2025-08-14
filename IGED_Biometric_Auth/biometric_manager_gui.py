@@ -22,7 +22,7 @@ try:
         QMainWindow, QMenuBar, QMenu, QAction, QFileDialog,
         QTableWidget, QTableWidgetItem, QHeaderView
     )
-    from PySide6.QtCore import Qt, QTimer, QThread, pyqtSignal, QSettings
+    from PySide6.QtCore import Qt, QTimer, QThread, Signal, QSettings
     from PySide6.QtGui import QFont, QIcon, QPixmap, QPalette, QColor
     PYSIDE6_AVAILABLE = True
 except ImportError:
@@ -44,8 +44,8 @@ logger = setup_logger(__name__) if 'setup_logger' in globals() else None
 
 class BiometricWorker(QThread):
     """Worker thread for biometric operations"""
-    authentication_complete = pyqtSignal(bool, str)
-    status_update = pyqtSignal(str)
+    authentication_complete = Signal(bool, str)
+    status_update = Signal(str)
     
     def __init__(self, operation: str, reason: str = ""):
         super().__init__()

@@ -25,9 +25,17 @@ from watchdog import Watchdog
 import logging
 
 # Try to import GUI components (optional)
+GUI_MANAGER_AVAILABLE = False
 try:
-    from ui.win_gui.main_window import IGEDGUI
-    GUI_AVAILABLE = True
+    # Try Qt6 GUI manager first for better performance
+    try:
+        from ui.win_gui.gui_manager import GUIManager
+        GUI_MANAGER_AVAILABLE = True
+        GUI_AVAILABLE = True
+    except ImportError:
+        # Fallback to tkinter GUI
+        from ui.win_gui.main_window import IGEDGUI
+        GUI_AVAILABLE = True
 except ImportError as e:
     GUI_AVAILABLE = False
     print(f"⚠️ GUI not available: {e}")
@@ -123,9 +131,17 @@ class IGEDLauncher:
             
         try:
             logger.info("🖥️ Starting GUI interface...")
-            self.components['gui'] = IGEDGUI(self.components)
-            self.components['gui'].run()
-            return True
+            
+            # Use Qt6 GUI manager if available for better performance
+            if GUI_MANAGER_AVAILABLE:
+                gui_manager = GUIManager(self.components, prefer_qt6=True)
+                self.components['gui'] = gui_manager
+                return gui_manager.run()
+            else:
+                # Fallback to tkinter GUI
+                self.components['gui'] = IGEDGUI(self.components)
+                self.components['gui'].run()
+                return True
         except Exception as e:
             logger.error(f"❌ Failed to start GUI: {e}")
             return False
