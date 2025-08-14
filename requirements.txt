@@ -50,6 +50,9 @@ PyYAML>=6.0
 schema>=0.7.5
 watchdog>=3.0.0
 
+# Orchestration
+networkx>=3.1
+
 # Android Integration
 qrcode>=7.4.2
 Pillow>=10.0.0
