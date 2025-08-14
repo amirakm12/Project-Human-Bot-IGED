@@ -271,7 +271,9 @@ class IGEDLauncher:
                 'config': self.config,
                 'voice': None,  # Will be loaded on demand
                 'orchestrator': None,
-                'memory': None
+                'memory': None,
+                'optimization_engine': None,
+                'data_validator': None
             }
             
             # Try to load actual components
@@ -281,6 +283,23 @@ class IGEDLauncher:
                 logger.info("✓ Orchestrator loaded")
             except ImportError:
                 logger.warning("Orchestrator not available")
+            
+            # Load optimization engine
+            try:
+                from core.optimization_engine import get_optimization_engine
+                self.components['optimization_engine'] = get_optimization_engine()
+                self.components['optimization_engine'].start_monitoring(interval=30)
+                logger.info("✓ Optimization Engine loaded and monitoring started")
+            except ImportError:
+                logger.warning("Optimization Engine not available")
+            
+            # Load data validator
+            try:
+                from core.data_validator import get_validator
+                self.components['data_validator'] = get_validator()
+                logger.info("✓ Data Validator loaded")
+            except ImportError:
+                logger.warning("Data Validator not available")
             
             return True
             
