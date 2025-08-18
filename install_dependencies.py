@@ -85,7 +85,8 @@ def install_security_dependencies():
     """Install security and network dependencies"""
     security_deps = [
         "python-nmap>=0.7.1",
-        "psutil>=5.9.0"
+        "psutil>=5.9.0",
+        "scapy"
     ]
     
     for dep in security_deps:

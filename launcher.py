@@ -178,24 +178,29 @@ class IGEDLauncher:
                 logger.info("📱 Android client can connect on port 9090")
                 logger.info("⌨️ Type 'quit' to exit")
                 
-                # Simple command loop for headless mode
-                try:
+                # In a non-interactive environment, just keep the main thread alive
+                if not sys.stdout.isatty():
                     while self.running:
-                        try:
-                            user_input = input("IGED> ").strip()
-                            if user_input.lower() in ['quit', 'exit', 'q']:
+                        time.sleep(1)
+                else:
+                    # Simple command loop for headless mode
+                    try:
+                        while self.running:
+                            try:
+                                user_input = input("IGED> ").strip()
+                                if user_input.lower() in ['quit', 'exit', 'q']:
+                                    break
+                                elif user_input:
+                                    # Process command through parser
+                                    result = self.components['parser'].parse_command(user_input)
+                                    if result:
+                                        self.components['orchestrator'].execute_task(result)
+                            except EOFError:
                                 break
-                            elif user_input:
-                                # Process command through parser
-                                result = self.components['parser'].parse_command(user_input)
-                                if result:
-                                    self.components['orchestrator'].execute_task(result)
-                        except EOFError:
-                            break
-                        except KeyboardInterrupt:
-                            break
-                except Exception as e:
-                    logger.error(f"❌ Command loop error: {e}")
+                            except KeyboardInterrupt:
+                                break
+                    except Exception as e:
+                        logger.error(f"❌ Command loop error: {e}")
             
         except KeyboardInterrupt:
             logger.info("🛑 Shutdown requested...")

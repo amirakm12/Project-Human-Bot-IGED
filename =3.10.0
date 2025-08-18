@@ -1,0 +1,2 @@
+Requirement already satisfied: SpeechRecognition in /home/jules/.pyenv/versions/3.12.11/lib/python3.12/site-packages (3.14.3)
+Requirement already satisfied: typing-extensions in /home/jules/.pyenv/versions/3.12.11/lib/python3.12/site-packages (from SpeechRecognition) (4.14.1)
