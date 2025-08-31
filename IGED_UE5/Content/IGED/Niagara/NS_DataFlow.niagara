@@ -1,0 +1,212 @@
+{
+  "NiagaraSystemAsset": {
+    "Name": "NS_DataFlow",
+    "Description": "Advanced data flow visualization with cyberpunk aesthetics",
+    "Version": "1.0",
+    "Emitters": [
+      {
+        "Name": "DataParticles",
+        "SimTarget": "GPUSim",
+        "FixedBounds": false,
+        "SpawnRate": 1000.0,
+        "MaxParticles": 100000,
+        "LocalSpace": false,
+        "Modules": [
+          {
+            "Type": "Spawn",
+            "Properties": {
+              "SpawnRate": 500.0,
+              "SpawnBurstInstantaneous": 100,
+              "SpawnProbability": 1.0
+            }
+          },
+          {
+            "Type": "Initialize",
+            "Properties": {
+              "Lifetime": {
+                "Min": 2.0,
+                "Max": 5.0
+              },
+              "StartLocation": {
+                "Distribution": "Sphere",
+                "Radius": 100.0
+              },
+              "StartVelocity": {
+                "Min": [-200, -200, -50],
+                "Max": [200, 200, 300]
+              },
+              "StartSize": {
+                "Min": [1.0, 1.0, 1.0],
+                "Max": [3.0, 3.0, 3.0]
+              },
+              "StartColor": {
+                "ColorCurve": {
+                  "Keys": [
+                    {"Time": 0.0, "Value": [0.0, 1.0, 1.0, 1.0]},
+                    {"Time": 0.5, "Value": [0.0, 0.5, 1.0, 1.0]},
+                    {"Time": 1.0, "Value": [1.0, 0.0, 1.0, 0.0]}
+                  ]
+                }
+              },
+              "StartRotationRate": {
+                "Min": -180.0,
+                "Max": 180.0
+              }
+            }
+          },
+          {
+            "Type": "Update",
+            "Properties": {
+              "Gravity": [0.0, 0.0, -50.0],
+              "Drag": 0.1,
+              "VortexStrength": 100.0,
+              "VortexAxis": [0.0, 0.0, 1.0],
+              "TurbulenceStrength": 50.0,
+              "TurbulenceFrequency": 2.0,
+              "ColorOverLife": {
+                "AlphaCurve": {
+                  "Keys": [
+                    {"Time": 0.0, "Value": 0.0},
+                    {"Time": 0.1, "Value": 1.0},
+                    {"Time": 0.9, "Value": 1.0},
+                    {"Time": 1.0, "Value": 0.0}
+                  ]
+                }
+              },
+              "SizeOverLife": {
+                "ScaleCurve": {
+                  "Keys": [
+                    {"Time": 0.0, "Value": 0.5},
+                    {"Time": 0.5, "Value": 1.5},
+                    {"Time": 1.0, "Value": 0.1}
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "Type": "Collision",
+            "Properties": {
+              "CollisionMode": "Scene",
+              "Resilience": 0.5,
+              "Friction": 0.2,
+              "RandomBounce": true,
+              "CollisionResponse": "Bounce"
+            }
+          },
+          {
+            "Type": "KillBox",
+            "Properties": {
+              "LowerBounds": [-1000, -1000, -100],
+              "UpperBounds": [1000, 1000, 1000],
+              "bKillInside": false,
+              "bWorldSpace": true
+            }
+          }
+        ],
+        "Renderer": {
+          "Type": "Sprite",
+          "Properties": {
+            "Material": "/Game/IGED/Materials/M_DataParticle",
+            "SubImageSize": [8, 8],
+            "SubImageIndex": 0,
+            "FacingMode": "FaceCameraPosition",
+            "Alignment": "Unaligned",
+            "SortMode": "ViewDepth",
+            "CustomSortingBinding": 0.0
+          }
+        }
+      },
+      {
+        "Name": "DataBeams",
+        "SimTarget": "GPUSim",
+        "SpawnRate": 50.0,
+        "MaxParticles": 1000,
+        "Modules": [
+          {
+            "Type": "Ribbon",
+            "Properties": {
+              "RibbonWidth": 5.0,
+              "RibbonTwist": 0.5,
+              "RibbonFacing": "Custom",
+              "TessellationMode": "Automatic",
+              "TessellationFactor": 16,
+              "Material": "/Game/IGED/Materials/M_DataBeam",
+              "UV0Settings": {
+                "Scale": [1.0, 1.0],
+                "Offset": [0.0, 0.0]
+              },
+              "UV1Settings": {
+                "Scale": [1.0, 1.0],
+                "Offset": [0.0, 0.0]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "Name": "HolographicGrid",
+        "SimTarget": "CPUSim",
+        "SpawnRate": 1.0,
+        "MaxParticles": 1,
+        "Modules": [
+          {
+            "Type": "Grid",
+            "Properties": {
+              "GridDimensions": [50, 50],
+              "GridSpacing": 20.0,
+              "GridColor": [0.0, 1.0, 0.8, 0.3],
+              "PulseSpeed": 2.0,
+              "PulseWaveLength": 500.0,
+              "DistortionAmount": 10.0,
+              "DistortionSpeed": 1.0
+            }
+          }
+        ]
+      }
+    ],
+    "SystemProperties": {
+      "WarmupTime": 2.0,
+      "WarmupTickCount": 0,
+      "FixedTickDelta": 0.016667,
+      "bFixedTickDelta": false,
+      "SecondsBeforeInactive": 0.0,
+      "bAutoDeactivate": false,
+      "LODDistances": [0.0, 2500.0, 5000.0],
+      "bUseLowestLOD": true,
+      "bDeterministic": false,
+      "RandomSeed": 0,
+      "bOverrideScalability": false,
+      "EffectType": "Gameplay"
+    },
+    "Parameters": [
+      {
+        "Name": "Intensity",
+        "Type": "Float",
+        "DefaultValue": 1.0,
+        "MinValue": 0.0,
+        "MaxValue": 10.0
+      },
+      {
+        "Name": "DataFlowColor",
+        "Type": "LinearColor",
+        "DefaultValue": [0.0, 1.0, 1.0, 1.0]
+      },
+      {
+        "Name": "SpawnLocation",
+        "Type": "Vector",
+        "DefaultValue": [0.0, 0.0, 0.0]
+      },
+      {
+        "Name": "FlowDirection",
+        "Type": "Vector",
+        "DefaultValue": [0.0, 0.0, 1.0]
+      },
+      {
+        "Name": "TurbulenceScale",
+        "Type": "Float",
+        "DefaultValue": 1.0
+      }
+    ]
+  }
+}
