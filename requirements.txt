@@ -1,24 +1,59 @@
-cryptography>=3.4.8
-Flask>=2.3.3
-Flask-Cors>=4.0.0
-requests>=2.31.0
+# IGED - Project Human Bot Requirements - Security Updated
+# Core dependencies for sovereign AI assistant with latest security patches
 
-# Voice Recognition
-SpeechRecognition>=3.10.0
-openai-whisper>=20231117
-PyAudio>=0.2.11
+# Core Framework - Updated for security
+cryptography>=45.0.6
+flask>=3.1.2
+flask-cors>=4.0.0
+requests>=2.32.3
 
-# Data Analysis
-pandas>=2.0.0
-numpy>=1.24.0
-matplotlib>=3.7.0
-seaborn>=0.12.0
+# Voice Recognition - Updated
+SpeechRecognition>=3.10.4
+openai-whisper>=20240930
+PyAudio>=0.2.14
 
-# Security and Networking
+# Data Analysis - Updated
+pandas>=2.2.3
+numpy>=2.1.3
+matplotlib>=3.10.6
+seaborn>=0.13.2
+
+# Security and Networking - Updated
 python-nmap>=0.7.1
-psutil>=5.9.0
+psutil>=6.1.0
 
-# Build and Development
-pyinstaller>=5.13.0
-setuptools>=68.0.0
-wheel>=0.41.0
+# Build and Development - Updated
+pyinstaller>=6.11.1
+setuptools>=75.6.0
+wheel>=0.45.1
+
+# Additional Security Dependencies
+urllib3>=2.2.3
+certifi>=2024.8.30
+idna>=3.10
+charset-normalizer>=3.4.0
+Pillow>=11.0.0
+jinja2>=3.1.4
+
+# Optional: GUI and System (built-in modules)
+# tkinter - Usually included with Python
+# platform - Usually included with Python
+# socket - Usually included with Python
+# threading - Usually included with Python
+# json - Usually included with Python
+# pathlib - Usually included with Python
+# typing - Usually included with Python
+# logging - Usually included with Python
+# datetime - Usually included with Python
+# subprocess - Usually included with Python
+# os - Usually included with Python
+# sys - Usually included with Python
+# time - Usually included with Python
+# queue - Usually included with Python
+# importlib - Usually included with Python
+# base64 - Usually included with Python
+# struct - Usually included with Python
+# binascii - Usually included with Python
+# re - Usually included with Python
+# uuid - Usually included with Python
+# tempfile - Usually included with Python
