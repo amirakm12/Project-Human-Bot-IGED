@@ -53,7 +53,11 @@ class WebAdminPanel:
             return
         
         self.app = Flask(__name__)
-        self.app.config['SECRET_KEY'] = 'iged-secret-key-2024'
+        # Load secret key from environment variable for security
+        import os
+        from dotenv import load_dotenv
+        load_dotenv()
+        self.app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY', os.urandom(32).hex())
         CORS(self.app)
         
         self.setup_routes()
