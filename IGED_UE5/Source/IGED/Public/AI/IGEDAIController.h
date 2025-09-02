@@ -129,11 +129,15 @@ protected:
 private:
     TArray<FAIAgentTask> TaskQueue;
     TMap<FString, FString> AgentMemory;
+    TMap<FString, FString> NetworkTopology;
     EAIAgentType CurrentAgentType;
     
     // Neural Network Components
     TArray<TArray<float>> NeuralWeights;
     TArray<float> NeuralBiases;
+    
+    // Timer handles
+    FTimerHandle TaskProcessTimer;
     
     void ProcessTaskQueue();
     void ExecuteCodeGenTask(const FAIAgentTask& Task);
