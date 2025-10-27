@@ -68,7 +68,7 @@ echo - Core system files (core/)
 echo - Agent modules (agents/)
 echo - Plugin system (plugins/)
 echo - User interfaces (ui/, admin_panel/)
-echo - Android client (android_client/, android-client/)
+echo - Android client (android_client/)
 echo - Build and installation scripts
 echo - Documentation files
 echo - Configuration and logs
