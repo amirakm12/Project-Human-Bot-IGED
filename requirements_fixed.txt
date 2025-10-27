@@ -1,0 +1,33 @@
+# IGED - Project Human Bot Requirements (Fixed)
+# Core dependencies for sovereign AI assistant
+
+# Core Framework
+cryptography>=3.4.8
+flask>=2.3.3
+flask-cors>=4.0.0
+requests>=2.31.0
+
+# Voice Recognition
+SpeechRecognition>=3.10.0
+openai-whisper>=20231117
+PyAudio>=0.2.11
+
+# Data Analysis
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Security and Networking
+python-nmap>=0.7.1
+psutil>=5.9.0
+
+# Build and Development
+pyinstaller>=5.13.0
+setuptools>=68.0.0
+wheel>=0.41.0
+
+# Note: The following are built-in Python modules and don't need installation:
+# tkinter, platform, socket, threading, json, pathlib, typing, 
+# logging, datetime, subprocess, os, sys, time, queue, importlib, 
+# base64, struct, binascii, re, uuid, tempfile
